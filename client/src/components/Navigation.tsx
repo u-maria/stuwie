@@ -2,6 +2,7 @@ import { Link, useLocation } from "wouter";
 import { Coffee, Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
+import logoPng from "@assets/11e7d118-d517-40b8-aeda-28b8432c632e-removebg-preview_1772058909148.png";
 
 export function Navigation() {
   const [location] = useLocation();
@@ -23,8 +24,8 @@ export function Navigation() {
         <div className="flex justify-between h-16 items-center">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center gap-2 text-foreground hover:text-primary transition-colors">
-              <div className="bg-primary text-primary-foreground p-2 rounded-xl shadow-sm">
-                <Coffee className="w-5 h-5" />
+              <div className="p-1">
+                <img src={logoPng} alt="Vienna Study Spots" className="w-10 h-10 object-contain" />
               </div>
               <span className="font-serif font-bold text-xl hidden sm:block">Vienna Study Spots</span>
             </Link>
