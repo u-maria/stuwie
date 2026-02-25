@@ -1,0 +1,196 @@
+You are a senior full-stack engineer. Build an MVP web platform called “Vienna Study Spots” as a mobile-first website.
+
+GOAL
+A curated, authority-based directory of laptop-friendly study spots in Vienna for mostly university students. Users can browse without an account. Accounts are required only for reviews, favorites, check-ins, and submitting new spots. All user-submitted spots require admin approval before becoming public.
+
+TECH STACK (use these unless impossible in Replit)
+- Next.js (App Router) + TypeScript
+- Tailwind CSS + shadcn/ui
+- Supabase for Auth + Postgres + Storage
+- Google Maps for interactive map (MVP-friendly). If API setup is blocked, provide a fallback Map view with OpenStreetMap/Leaflet.
+- Deployable and runnable inside Replit.
+
+CORE PRODUCT POSITIONING
+“The only regularly updated curated list of study-friendly locations in Vienna, not scattered across social media.”
+
+MVP SCOPE (must implement)
+1) Public browsing (no login required)
+- Homepage: headline + short description + primary CTA to search, and secondary CTA to map view.
+- Search/browse page: list of study spots with filters:
+  - District (dropdown)
+  - Open now (based on opening hours)
+  - Open on Sundays (boolean)
+  - Power outlets available (boolean)
+  - Wi-Fi available (boolean)
+  - Sort: Most relevant (default), Highest rated, Recently added
+- Study spot detail page:
+  - Image carousel (main image + additional images)
+  - Name
+  - Address + link to Google Maps
+  - Opening hours
+  - Website (optional)
+  - Flags: Sunday open, Wi-Fi, outlets
+  - Tags (quiet, spacious, pet-friendly, vegan-friendly, etc.)
+  - Description (must include directions and additional info)
+  - Rating summary + reviews list
+
+2) Authentication (Supabase Auth)
+- Users can sign up/sign in.
+- Browsing works without auth.
+- Only authenticated users can: review, favorite, check-in, submit spots.
+
+3) Reviews
+- Rating 0–5 stars + optional text + optional tags
+- One review per user per study spot (editable)
+- Publicly visible on the spot page
+- Update spot’s avg_rating and review_count efficiently (trigger or server-side aggregation)
+
+4) Favorites + “Check out later”
+- Two lists saved per user:
+  - favorite
+  - check_later
+- Toggle buttons on spot detail page and list cards.
+- Profile page shows both lists.
+
+5) Check-ins (simple, no streaks/goals in MVP)
+- Button on spot page: “Check in”
+- Creates an entry like: “YYYY-MM-DD @username studied at {spot}”
+- Profile page shows chronological check-ins.
+
+6) Submit a study spot (admin moderated)
+- Authenticated users can submit a new spot using a form matching the template:
+  Required:
+    - Name
+    - Address
+    - District
+    - Opening hours (structured)
+    - Description (required; prompt user to include directions)
+    - At least 1 image (required; upload to Supabase Storage)
+    - Wi-Fi boolean, outlets boolean, Sunday open boolean
+  Optional:
+    - Website
+    - Tags (multi-select)
+- Submission creates a StudySpot row with status = "pending"
+- Pending spots are NOT visible to public browsing/search.
+
+7) Admin moderation
+- There is exactly one admin user (configured via env var ADMIN_EMAIL).
+- Admin panel routes:
+  - /admin/pending: list pending submissions
+  - Admin can approve/reject
+  - Admin can edit spot fields
+- Only admin can approve/reject or change status.
+- Provide seed flow: allow admin to create 15–20 initial approved spots via a simple seed script or admin UI.
+
+MAP VIEW
+- Provide a map view page showing pins for approved spots.
+- Pins clickable: show mini card + link to spot page.
+- Map respects filters if feasible.
+- Use Google Maps if available; otherwise fallback to Leaflet.
+
+DATA MODEL (Supabase Postgres)
+Create SQL migrations and types:
+- study_spots:
+  id (uuid pk)
+  name (text)
+  district (text)
+  address (text)
+  lat (double precision)
+  lng (double precision)
+  opening_hours (jsonb)  // store by day: open/close, closed flag
+  sunday_open (boolean)
+  has_wifi (boolean)
+  has_outlets (boolean)
+  website (text, nullable)
+  description (text)
+  tags (text[] or jsonb)
+  avg_rating (numeric)
+  review_count (int)
+  created_by_user_id (uuid, nullable)
+  status (text enum: pending/approved/rejected)
+  is_featured (boolean default false)
+  is_sponsored (boolean default false)
+  ranking_weight (int default 0)
+  created_at (timestamptz default now())
+- spot_images:
+  id (uuid)
+  spot_id (uuid fk)
+  storage_path (text)
+  sort_order (int)
+- reviews:
+  id (uuid)
+  user_id (uuid)
+  spot_id (uuid)
+  rating (int)
+  text (text nullable)
+  tags (text[] nullable)
+  created_at
+  updated_at
+  unique(user_id, spot_id)
+- saved_spots:
+  user_id
+  spot_id
+  list_type (text enum: favorite/check_later)
+  created_at
+  unique(user_id, spot_id, list_type)
+- check_ins:
+  id
+  user_id
+  spot_id
+  created_at
+
+SECURITY / RLS
+Implement Supabase Row Level Security:
+- Public can read study_spots where status='approved'
+- Only authenticated users can insert reviews, saved_spots, check_ins, and spot submissions (study_spots with status='pending')
+- Only admin can update study_spots status or edit any spot
+- Users can edit/delete their own reviews, saved_spots, check_ins
+- spot_images readable for approved spots; uploads allowed for submitter; admin can manage.
+
+UI REQUIREMENTS
+- Mobile-first, clean, calm “tool vibe”
+- No clutter. Focus on fast search.
+- Use shadcn components for forms, cards, tabs.
+- Include empty states and loading states.
+- Include “Login to review” prompts where needed.
+
+FUNCTIONAL REQUIREMENTS
+- “Open now” must work by comparing current local Vienna time to opening_hours JSON.
+- “Open on Sundays” uses sunday_open boolean.
+- Provide validation + helpful errors for submission.
+
+DELIVERABLES
+- A fully working Replit project
+- Clear README:
+  - How to set env vars (SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY if needed, GOOGLE_MAPS_API_KEY, ADMIN_EMAIL)
+  - How to run migrations / seed spots
+  - How to run locally in Replit
+- Provide SQL migration files and minimal seed script to insert 15–20 sample approved spots.
+- Ensure all pages are connected and navigable:
+  - /
+  - /spots
+  - /spots/[id]
+  - /map
+  - /submit
+  - /profile
+  - /admin/pending (admin only)
+
+CONSTRAINTS
+- Keep MVP scope tight: NO streaks/goals/stats yet.
+- Build for future monetization by keeping fields is_featured, is_sponsored, ranking_weight in DB, but do not build monetization UI.
+
+IMPLEMENTATION STEPS (what you should do)
+1) Scaffold Next.js + Tailwind + shadcn
+2) Set up Supabase client + Auth
+3) Create migrations + RLS policies
+4) Build pages and components
+5) Implement filters + open-now logic
+6) Implement map view
+7) Implement submit + image upload
+8) Implement admin moderation
+9) Add seed data and finalize README
+
+Output:
+- Provide the full file tree and all key code files.
+- Provide SQL migration content.
+- Provide instructions to run in Replit.
