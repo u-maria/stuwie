@@ -7,8 +7,8 @@
 
 @layer base {
   :root {
-    --font-sans: 'DM Sans', sans-serif;
-    --font-serif: 'Lora', serif;
+    --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-serif: 'Lastik', serif;
 
     /* Warm, neutral, beige/cream tool vibe */
     --background: 40 33% 96%; /* #F8F5F0 */
