@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
@@ -23,6 +24,32 @@ const formSchema = z.object({
   website: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   tagsString: z.string().optional(),
 });
+
+const DISTRICTS = [
+  "1. Innere Stadt",
+  "2. Leopoldstadt",
+  "3. Landstraße",
+  "4. Wieden",
+  "5. Margareten",
+  "6. Mariahilf",
+  "7. Neubau",
+  "8. Josefstadt",
+  "9. Alsergrund",
+  "10. Favoriten",
+  "11. Simmering",
+  "12. Meidling",
+  "13. Hietzing",
+  "14. Penzing",
+  "15. Rudolfsheim-Fünfhaus",
+  "16. Ottakring",
+  "17. Hernals",
+  "18. Währing",
+  "19. Döbling",
+  "20. Brigittenau",
+  "21. Floridsdorf",
+  "22. Donaustadt",
+  "23. Liesing"
+];
 
 export default function SubmitSpot() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -100,7 +127,18 @@ export default function SubmitSpot() {
                   <FormField control={form.control} name="district" render={({ field }) => (
                     <FormItem>
                       <FormLabel>District</FormLabel>
-                      <FormControl><Input placeholder="e.g. 1060 Wien" className="bg-background rounded-xl" {...field} /></FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-background rounded-xl">
+                            <SelectValue placeholder="Select a district" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {DISTRICTS.map(d => (
+                            <SelectItem key={d} value={d}>{d}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )} />

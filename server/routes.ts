@@ -1,10 +1,17 @@
 import type { Express } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
-import { api } from "@shared/routes";
-import { z } from "zod";
+import { db } from "./db";
+import { 
+  studySpots, spotImages, reviews, savedSpots, checkIns,
+  type StudySpot, type SpotImage, type Review, type SavedSpot, type CheckIn,
+  type InsertStudySpot, type InsertSpotImage, type InsertReview, type InsertSavedSpot, type InsertCheckIn
+} from "@shared/schema";
+import { eq, and, desc } from "drizzle-orm";
 import { setupAuth, isAuthenticated, authStorage } from "./replit_integrations/auth";
 import { registerAuthRoutes } from "./replit_integrations/auth/routes";
+import { api } from "@shared/routes";
+import { z } from "zod";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -18,7 +25,10 @@ export async function registerRoutes(
   async function seedDatabase() {
     try {
       const spots = await storage.getStudySpots();
-      if (spots.length === 0) {
+      // Only seed if empty OR if we need to clean up old fake spots
+      const hasFakeSpots = spots.some(s => s.name === "Café Central" || s.name === "Study Hub 1090");
+      
+      if (spots.length === 0 || hasFakeSpots) {
         const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
         const adminUser = await authStorage.upsertUser({
           id: "admin-id-123",
@@ -28,41 +38,149 @@ export async function registerRoutes(
           profileImageUrl: null
         });
 
-        const spot1 = await storage.createStudySpot({
-          name: "Café Central",
-          district: "1010",
-          address: "Herrengasse 14, 1010 Wien",
-          lat: 48.2104,
-          lng: 16.3654,
-          openingHours: { monday: { open: "08:00", close: "20:00" }, sunday: { open: "10:00", close: "18:00" } },
-          sundayOpen: true,
-          hasWifi: true,
-          hasOutlets: true,
-          website: "https://cafecentral.wien",
-          description: "Historic café in the heart of Vienna. Very beautiful but can be busy. Good for reading.",
-          tags: ["historic", "coffee"],
-          createdByUserId: adminUser.id,
-        });
-        await storage.updateStudySpotStatus(spot1.id, "approved");
-        await storage.addSpotImages([{ spotId: spot1.id, url: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=1000&auto=format&fit=crop", sortOrder: 0 }]);
+        // Wipe old seeds (A)
+        for (const s of spots) {
+          if (s.name === "Café Central" || s.name === "Study Hub 1090") {
+            await db.delete(spotImages).where(eq(spotImages.spotId, s.id));
+            await db.delete(reviews).where(eq(reviews.spotId, s.id));
+            await db.delete(savedSpots).where(eq(savedSpots.spotId, s.id));
+            await db.delete(checkIns).where(eq(checkIns.spotId, s.id));
+            await db.delete(studySpots).where(eq(studySpots.id, s.id));
+          }
+        }
 
-        const spot2 = await storage.createStudySpot({
-          name: "Study Hub 1090",
-          district: "1090",
-          address: "Alserstraße 23, 1090 Wien",
-          lat: 48.2163,
-          lng: 16.3486,
-          openingHours: { monday: { open: "09:00", close: "22:00" } },
-          sundayOpen: false,
-          hasWifi: true,
-          hasOutlets: true,
-          website: null,
-          description: "Quiet and modern study space for students.",
-          tags: ["quiet", "spacious"],
-          createdByUserId: adminUser.id,
-        });
-        await storage.updateStudySpotStatus(spot2.id, "approved");
-        await storage.addSpotImages([{ spotId: spot2.id, url: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=1000&auto=format&fit=crop", sortOrder: 0 }]);
+        // Real Study Spots (C)
+        const realSpots = [
+          {
+            name: "das café",
+            district: "7. Neubau",
+            address: "Burggasse 10, 1070 Wien",
+            lat: 48.2038,
+            lng: 16.3558,
+            website: "https://www.das-cafe.wien",
+            photo_url: "https://www.das-cafe.wien/fileadmin/user_upload/dascafe/_MAR9685_Kopie.jpg",
+            openingHours: {
+              mon: { open: "09:00", close: "24:00" },
+              tue: { open: "09:00", close: "24:00" },
+              wed: { open: "09:00", close: "24:00" },
+              thu: { open: "09:00", close: "01:00" },
+              fri: { open: "09:00", close: "01:00" },
+              sat: { open: "10:00", close: "01:00" },
+              sun: { open: "10:00", close: "23:00" }
+            },
+            tags: ["spacious", "bright", "big-tables", "sunday-safe", "work-friendly"],
+            description: "Bright, spacious café with lots of table space for working/studying. Solid option in the 7th district when you want a reliable longer session."
+          },
+          {
+            name: "Jonas Reindl (Währinger Straße)",
+            district: "9. Alsergrund",
+            address: "Währinger Straße 2–4, 1090 Wien",
+            lat: 48.2149,
+            lng: 16.3608,
+            website: "https://www.jonasreindl.at",
+            photo_url: "https://cdn.prod.website-files.com/64b6780f84d27e4bfd91f2d6/6676cfbec142b79bf6bf0b67_jonasreindlalsergrundvienna-6676bd5815d50.webp",
+            openingHours: {
+              mon: { open: "08:00", close: "17:30" },
+              tue: { open: "08:00", close: "17:30" },
+              wed: { open: "08:00", close: "17:30" },
+              thu: { open: "08:00", close: "17:30" },
+              fri: { open: "08:00", close: "17:30" },
+              sat: { open: "09:30", close: "17:30" },
+              sun: { open: "09:30", close: "17:30" }
+            },
+            tags: ["near-uni", "specialty-coffee", "busy", "sunday-safe", "laptop-friendly"],
+            description: "A student classic near the university area. Great coffee and lots of laptop users. Can get busy, so it’s best earlier or outside peak hours."
+          },
+          {
+            name: "J. Hornig Kaffeebar",
+            district: "7. Neubau",
+            address: "Siebensterngasse 29, 1070 Wien",
+            lat: 48.2018,
+            lng: 16.3538,
+            website: "https://jhornig.com",
+            photo_url: "https://www.area.at/assets/images/c/hornig-7-5s04bvq6f8epjv3.jpg",
+            openingHours: {
+              mon: { open: "08:00", close: "19:00" },
+              tue: { open: "08:00", close: "19:00" },
+              wed: { open: "08:00", close: "19:00" },
+              thu: { open: "08:00", close: "19:00" },
+              fri: { open: "08:00", close: "19:00" },
+              sat: { open: "09:00", close: "19:00" },
+              sun: { open: "10:00", close: "18:00" }
+            },
+            tags: ["sunday-safe", "central-1070", "good-for-2-4h", "work-friendly"],
+            description: "Reliable café for getting work done in the 7th. Good default option: coffee + table + steady hours (including Sundays)."
+          },
+          {
+            name: "Burggasse24 Café",
+            district: "7. Neubau",
+            address: "Burggasse 24/8, 1070 Wien",
+            lat: 48.2045,
+            lng: 16.3532,
+            website: "https://www.burggasse24.com",
+            photo_url: "https://lokalfuehrer.stadtbekannt.at/wp-content/uploads/2016/04/Burggasse24-c-STADTBEKANNT.jpg",
+            openingHours: {
+              mon: { open: "10:00", close: "22:00" },
+              tue: { open: "10:00", close: "22:00" },
+              wed: { open: "10:00", close: "22:00" },
+              thu: { open: "10:00", close: "22:00" },
+              fri: { open: "10:00", close: "22:00" },
+              sat: { open: "10:00", close: "22:00" },
+              sun: { open: "10:00", close: "22:00" }
+            },
+            tags: ["cozy", "can-be-packed", "short-session", "best-off-peak"],
+            description: "Not consistently laptop-friendly. Best if it’s not packed, ideally a couple hours before closing, and you’re doing a shorter session."
+          },
+          {
+            name: "7stern Café",
+            district: "7. Neubau",
+            address: "Siebensterngasse 31, 1070 Wien",
+            lat: 48.2017,
+            lng: 16.3535,
+            website: "https://www.7stern.net",
+            photo_url: "https://www.vienna.at/2015/11/siebenstern-6001.jpg",
+            openingHours: {
+              mon: { closed: true },
+              tue: { open: "10:00", close: "23:00" },
+              wed: { open: "10:00", close: "23:00" },
+              thu: { open: "10:00", close: "23:00" },
+              fri: { open: "10:00", close: "23:00" },
+              sat: { open: "10:00", close: "23:00" },
+              sun: { open: "10:00", close: "18:00" }
+            },
+            tags: ["late-hours", "afternoon-best", "classic-1070", "sunday-safe"],
+            description: "Classic café option in the 7th with long hours Tue–Sat (until 23:00). Great for afternoon/evening sessions."
+          }
+        ];
+
+        // Wipe old seeds if they exist to avoid duplication/confusion
+        if (hasFakeSpots) {
+           // We can't easily TRUNCATE without direct SQL, but we can delete from storage if we add the method.
+           // For now, let's just create the new ones and we'll manually filter if needed or just assume fresh start if spots.length matches seed count.
+        }
+
+        for (const s of realSpots) {
+          const existing = spots.find(spot => spot.name === s.name);
+          if (!existing) {
+            const newSpot = await storage.createStudySpot({
+              name: s.name,
+              district: s.district,
+              address: s.address,
+              lat: s.lat,
+              lng: s.lng,
+              openingHours: s.openingHours,
+              sundayOpen: true,
+              hasWifi: true,
+              hasOutlets: true,
+              website: s.website,
+              description: s.description,
+              tags: s.tags,
+              createdByUserId: adminUser.id,
+            });
+            await storage.updateStudySpotStatus(newSpot.id, "approved");
+            await storage.addSpotImages([{ spotId: newSpot.id, url: s.photo_url, sortOrder: 0 }]);
+          }
+        }
       }
     } catch (e) {
       console.error("Error seeding DB", e);

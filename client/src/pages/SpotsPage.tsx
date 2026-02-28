@@ -16,7 +16,32 @@ export default function SpotsPage() {
     ...(district !== "all" && { district })
   });
 
-  const districts = ["all", "1010 Wien", "1020 Wien", "1030 Wien", "1040 Wien", "1050 Wien", "1060 Wien", "1070 Wien", "1080 Wien", "1090 Wien"];
+  const districts = [
+    "all",
+    "1. Innere Stadt",
+    "2. Leopoldstadt",
+    "3. Landstraße",
+    "4. Wieden",
+    "5. Margareten",
+    "6. Mariahilf",
+    "7. Neubau",
+    "8. Josefstadt",
+    "9. Alsergrund",
+    "10. Favoriten",
+    "11. Simmering",
+    "12. Meidling",
+    "13. Hietzing",
+    "14. Penzing",
+    "15. Rudolfsheim-Fünfhaus",
+    "16. Ottakring",
+    "17. Hernals",
+    "18. Währing",
+    "19. Döbling",
+    "20. Brigittenau",
+    "21. Floridsdorf",
+    "22. Donaustadt",
+    "23. Liesing"
+  ];
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-8">
