@@ -1,12 +1,32 @@
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "wouter";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Search, Map, Coffee, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import heroImg from "@assets/27298177-5dbc-486f-9618-14966332c07a_1771986021233.png";
 
+const MOTTOS = [
+  "Stop guessing. Start studying.",
+  "Sunday-safe study spots.",
+  "Built for students by students.",
+];
+
 export default function Home() {
   const { isAuthenticated, isLoading } = useAuth();
+  const [currentMotto, setCurrentMotto] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+
+  const nextMotto = useCallback(() => {
+    setCurrentMotto((prev) => (prev + 1) % MOTTOS.length);
+  }, []);
+
+  useEffect(() => {
+    if (isPaused || prefersReducedMotion) return;
+    const interval = setInterval(nextMotto, 3000);
+    return () => clearInterval(interval);
+  }, [isPaused, nextMotto, prefersReducedMotion]);
 
   if (isLoading) return <div className="min-h-screen bg-background" />;
 
@@ -30,9 +50,26 @@ export default function Home() {
             <span className="text-primary italic">focus space.</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed">
-            Discover and share quiet cafes, libraries, and hidden gems in Vienna designed for deep work and studying.
-          </p>
+          <div 
+            className="h-14 overflow-hidden"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+            onFocus={() => setIsPaused(true)}
+            onBlur={() => setIsPaused(false)}
+          >
+            <AnimatePresence mode="wait">
+              <motion.p
+                key={currentMotto}
+                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 10 }}
+                animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
+                exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -10 }}
+                transition={{ duration: 0.5 }}
+                className="text-lg md:text-xl text-muted-foreground max-w-lg leading-relaxed"
+              >
+                {MOTTOS[currentMotto]}
+              </motion.p>
+            </AnimatePresence>
+          </div>
           
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button asChild size="lg" className="rounded-full px-8 text-base shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
