@@ -7,8 +7,8 @@
 
 @layer base {
   :root {
-    --font-hero: 'Times New Roman MT Condensed', serif;
-    --font-body: 'Alike', serif;
+    --font-sans: 'DM Sans', sans-serif;
+    --font-serif: 'Lora', serif;
 
     /* Warm, neutral, beige/cream tool vibe */
     --background: 40 33% 96%; /* #F8F5F0 */
@@ -46,16 +46,11 @@
 @layer base {
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: var(--font-body);
+    font-family: var(--font-sans);
   }
 
-  h1 {
-    font-family: var(--font-hero);
-    @apply tracking-tighter font-bold uppercase;
-  }
-
-  h2, h3, h4, h5, h6 {
-    font-family: var(--font-body);
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
     @apply tracking-tight;
   }
 }
@@ -66,7 +61,7 @@
 }
 .leaflet-popup-content-wrapper {
   border-radius: var(--radius);
-  font-family: var(--font-body);
+  font-family: var(--font-sans);
 }
 .leaflet-popup-content {
   margin: 12px;
