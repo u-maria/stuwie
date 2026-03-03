@@ -10,36 +10,44 @@
     --font-sans: 'DM Sans', sans-serif;
     --font-serif: 'Lora', serif;
 
-    /* Warm, neutral, beige/cream tool vibe */
-    --background: 40 33% 96%; /* #F8F5F0 */
-    --foreground: 20 10% 15%; /* #2A2826 */
+    /* New Warm Editorial Palette */
+    --background: 36 100% 91%; /* #FFEED2 - Butter */
+    --foreground: 30 25% 12%; /* #2A2016 - Text Dark */
     
     --card: 0 0% 100%;
-    --card-foreground: 20 10% 15%;
+    --card-foreground: 30 25% 12%;
+    --card-border: 36 33% 83%;
     
-    --popover: 0 0% 100%;
-    --popover-foreground: 20 10% 15%;
+    --popover: 36 100% 91%;
+    --popover-foreground: 30 25% 12%;
+    --popover-border: 36 33% 83%;
     
-    --primary: 25 35% 45%; /* Earthy Terracotta */
-    --primary-foreground: 40 33% 96%;
+    --primary: 32 35% 42%; /* #916D45 - Sugar */
+    --primary-foreground: 36 100% 91%; /* Butter */
     
-    --secondary: 40 20% 90%; /* Deeper Beige */
-    --secondary-foreground: 20 10% 15%;
+    --secondary: 33 28% 72%; /* #CDB79E - Muted */
+    --secondary-foreground: 30 25% 12%;
     
-    --muted: 40 20% 92%;
-    --muted-foreground: 20 5% 45%;
+    --muted: 33 28% 72%;
+    --muted-foreground: 30 15% 35%;
     
-    --accent: 120 20% 40%; /* Sage Green Accent */
-    --accent-foreground: 0 0% 100%;
+    --accent: 32 35% 35%; /* Darker Sugar */
+    --accent-foreground: 36 100% 91%;
     
-    --destructive: 0 60% 50%;
+    --destructive: 0 60% 40%;
     --destructive-foreground: 0 0% 100%;
     
-    --border: 40 15% 85%;
-    --input: 40 15% 85%;
-    --ring: 25 35% 45%;
+    --border: 36 33% 83%; /* #E6D6BF */
+    --input: 36 33% 83%;
+    --ring: 32 35% 42%;
     
     --radius: 1rem;
+
+    --button-outline: 32 35% 42% / 0.3;
+    --badge-outline: 32 35% 42% / 0.1;
+
+    --elevate-1: rgba(145, 109, 69, 0.05);
+    --elevate-2: rgba(145, 109, 69, 0.12);
   }
 }
 
@@ -50,8 +58,11 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
-    @apply tracking-tight;
+    @apply font-serif text-foreground tracking-tight;
+  }
+
+  a:not([role="button"]) {
+    @apply text-primary hover:opacity-80 transition-opacity;
   }
 }
 
