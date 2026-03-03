@@ -1,0 +1,115 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output).
+
+A) HOME PAGE – REPLACE HERO IMAGE
+
+- Replace the current hero image/mockup on the landing page with the new provided JPG (already in project assets).
+- Use it as the hero visual on the right side (same layout as now), inside the rounded container.
+- Keep the outer hero container border-radius at 24px.
+- IMPORTANT: Apply correct nested corner radius:
+  - Outer container radius = 24px
+  - Inner image radius = 16px (NOT 24px)
+  - This ensures visually correct nested alignment.
+- Use object-fit: cover.
+- Keep soft shadow and padding intact.
+- Ensure fully responsive behavior.
+
+-----------------------------------------------------
+
+B) /SPOTS PAGE – FIX SEARCH BAR UNDER “DISCOVER SPOTS”
+
+- Make search input fully functional.
+- Placeholder: “Search by name or keyword…”
+- Debounced real-time filtering (~200ms).
+- Match against:
+  - name
+  - address
+  - district
+  - tags
+  - description
+- Maintain clean alignment with district dropdown + More Filters button.
+- Stack cleanly on mobile.
+
+-----------------------------------------------------
+
+C) /SPOTS PAGE – MAKE “MORE FILTERS” BUTTON WORK
+
+Use shadcn UI (Sheet or Dialog preferred).
+
+On click, open filter panel containing:
+
+1) Open Now (boolean)
+2) Open on Sunday (boolean)
+3) Wi-Fi (boolean)
+4) Power Outlets (boolean)
+5) District (dropdown – synced with existing one)
+6) Tags (multi-select)
+
+Behavior:
+- Filters apply immediately OR via “Apply Filters” button (consistent).
+- Include “Clear all” button.
+- Filters must update:
+  - visible spot cards
+  - map view (if same dataset is used)
+
+-----------------------------------------------------
+
+D) TAG FILTER CONSISTENCY
+
+- Tag filter options must be dynamically generated from existing spot tags.
+- Use exact tag strings displayed on cards (e.g. spacious, near-uni, sunday-safe, cozy, late-hours).
+- Filtering must use same source-of-truth tag values.
+- Keep pill UI consistent.
+
+-----------------------------------------------------
+
+E) ADD /ABOUT PAGE + NAV LINK
+
+Create new route: /about
+Add “About” link in top navigation (desktop + mobile).
+
+Design:
+- Same typography + butter/sugar palette.
+- Max width ~700px.
+- Clean editorial layout.
+- Good spacing.
+- Emphasize “ACTUAL” (bold or italic).
+
+Page content:
+
+Title: “About”
+Subtitle (optional): “Meet the team behind this project!”
+
+Body:
+
+Meet the team behind this project! Except… the only member is me, Maria.
+
+I am a Computer Science student who is known among her friends for not being able to fully concentrate on anything at home. I always rely on getting ready and studying outside in order to feel motivated and to be more productive.
+
+At some point I realized: I am not alone in this. The libraries and cafes are constantly full of busy students looking for some focus to finish their tasks. But as a long time student I can confidently say: looking for a study spot in Vienna is not always an easy task.
+
+You always have to spend lots of time on research, ask your friends, look it up on TikTok etc… and in the end you never know whether you will actually like this study spot.
+
+Do they have good Wi-Fi? Are there any power outlets? Are they laptop friendly or will I get kicked out for just trying to study there? Is it too pricey for a student? Do other people even study there or will I look weird and out of place?
+
+So many questions remain unanswered.
+
+So I decided to come up with a curated list of ACTUAL good study spots in Vienna that just don’t disappoint. And if you have any doubts, you can always rely on other users’ reviews.
+
+Any suggestions on improving the website and overall experience are always welcome!
+
+Here is the contact form: link.
+
+- Make “contact form: link” a clickable button (placeholder href="#").
+
+-----------------------------------------------------
+
+IMPORTANT
+
+- Do NOT change database structure.
+- Do NOT add placeholder spots.
+- Keep scope limited to UI + filtering logic + About page.
+- After implementation confirm:
+  1) Hero image replaced and nested radius correct (24 outer / 16 inner)
+  2) Search works
+  3) More Filters opens and filters correctly (including tags)
+  4) /about page exists and nav link works

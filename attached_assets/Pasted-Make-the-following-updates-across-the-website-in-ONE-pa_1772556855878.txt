@@ -1,0 +1,84 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output).
+
+A) HOME PAGE – REPLACE HERO IMAGE
+- Replace the current hero image/mockup on the landing page with the new provided JPG.
+- Use it as the hero visual on the right side (same layout as now), inside the rounded container.
+- Ensure it is cropped nicely (cover), keeps rounded corners, and is responsive.
+- The image file is already available in the project assets (use the provided JPG, not an external URL).
+
+B) /SPOTS PAGE – FIX SEARCH BAR UNDER “DISCOVER SPOTS”
+Current issues: search bar looks/behaves wrong and does not filter properly.
+- Make the search input fully functional:
+  - placeholder: “Search by name or keyword…”
+  - filters spots in real-time (debounced ~200ms)
+  - matches against: name, address, district, tags, description
+- Ensure the search field is visually aligned with the district dropdown and “More Filters” button.
+- On mobile, stack neatly with good spacing.
+
+C) /SPOTS PAGE – MAKE “MORE FILTERS” BUTTON ACTUALLY WORK
+Current issue: button exists but does nothing.
+Implement a working filter panel (shadcn UI preferred: Sheet or Dialog):
+When user clicks “More Filters”, open a panel containing these filters:
+1) Open Now (boolean)
+2) Open on Sunday (boolean)
+3) Wi-Fi (boolean)
+4) Power Outlets (boolean)
+5) District (dropdown — already exists, keep it synced)
+6) Tags (multi-select based on tags used by spots)
+
+Filter behavior:
+- Filters apply immediately or via “Apply Filters” button (either is fine, but must be consistent).
+- Include “Clear all” button.
+- Ensure filters update the visible cards and the map (if map view uses same dataset).
+- The tags filter should display available tag options based on the current dataset (unique tags across spots), and selecting a tag shows only spots that include that tag.
+
+D) /SPOTS PAGE – FILTERS SHOULD MATCH TAGS SHOWN ON EACH STUDY SPOT CARD
+Right now each card shows tags like “spacious”, “near-uni”, “sunday-safe”, etc.
+- Ensure the “Tags” filter options include these exact tag strings.
+- Ensure filtering uses the same source-of-truth tag values that are displayed on the cards.
+- Keep tag UI consistent (pill style).
+
+E) ADD “ABOUT US” PAGE + NAV LINK
+Create a new route/page: /about
+Add a visible nav link “About” in the top navigation (desktop + mobile).
+Page should match the site typography + butter/sugar palette and look editorial/clean.
+
+About page copy (use exactly, but feel free to add paragraph spacing and italic emphasis where it fits):
+
+Title: “About”
+Subtitle (optional): “Meet the team behind this project!”
+
+Body:
+“Meet the team behind this project! Except… the only member is me, Maria.
+
+I am a Computer Science student who is known among her friends for not being able to fully concentrate on anything at home. I always rely on getting ready and studying outside in order to feel motivated and to be more productive.
+
+At some point I realized: I am not alone in this. The libraries and cafes are constantly full of busy students looking for some focus to finish their tasks. But as a long time student I can confidently say: looking for a study spot in Vienna is not always an easy task.
+
+You always have to spend lots of time on research, ask your friends, look it up on TikTok etc… and in the end you never know whether you will actually like this study spot.
+
+Do they have good Wi-Fi? Are there any power outlets? Are they laptop friendly or will I get kicked out for just trying to study there? Is it too pricey for a student? Do other people even study there or will I look weird and out of place?
+
+So many questions remain unanswered.
+
+So I decided to come up with a curated list of ACTUAL good study spots in Vienna that just don’t disappoint. And if you have any doubts, you can always rely on other users’ reviews.
+
+Any suggestions on improving the website and overall experience are always welcome!
+
+Here is the contact form: link.”
+
+- Style notes:
+  - Make it readable (max width ~700px)
+  - Use subtle section spacing
+  - Emphasize “ACTUAL” (bold or italic)
+  - “contact form: link” should be a clickable button or link (use placeholder href="#" for now)
+
+F) IMPORTANT
+- Do not change the existing database structure.
+- Do not add new placeholder spots.
+- Keep changes scoped to UI + filtering behavior + the new About page.
+- After implementation, confirm:
+  1) home hero image replaced successfully
+  2) search works
+  3) More Filters opens and filters correctly (including tags)
+  4) /about page exists and nav link works
