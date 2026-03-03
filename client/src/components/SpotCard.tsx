@@ -85,17 +85,17 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
 
         <div className="mt-auto pt-4 border-t border-border/50 flex flex-wrap gap-2">
           {spot.hasWifi && (
-            <Badge variant="secondary" className="font-normal gap-1">
+            <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1">
               <Wifi className="w-3 h-3" /> WiFi
             </Badge>
           )}
           {spot.hasOutlets && (
-            <Badge variant="secondary" className="font-normal gap-1">
+            <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1">
               <Plug className="w-3 h-3" /> Outlets
             </Badge>
           )}
           {spot.tags && Array.isArray(spot.tags) && spot.tags.slice(0, 1).map((tag, i) => (
-            <Badge key={i} variant="secondary" className="font-normal">
+            <Badge key={i} variant="outline" className="font-normal text-muted-foreground border-border/50">
               {String(tag)}
             </Badge>
           ))}
