@@ -13,6 +13,7 @@ import SpotDetail from "@/pages/SpotDetail";
 import Profile from "@/pages/Profile";
 import SubmitSpot from "@/pages/SubmitSpot";
 import AdminDashboard from "@/pages/AdminDashboard";
+import About from "@/pages/About";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/profile" component={Profile} />
       <Route path="/submit" component={SubmitSpot} />
       <Route path="/admin/pending" component={AdminDashboard} />
+      <Route path="/about" component={About} />
       <Route component={NotFound} />
     </Switch>
   );

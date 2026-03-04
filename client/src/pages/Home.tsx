@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Search, Map, Coffee, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
-import heroImg from "@assets/27298177-5dbc-486f-9618-14966332c07a_1771986021233.png";
+import heroImg from "@assets/macarena-navarro-ro-7djAkodU-unsplash_1772556985313.jpg";
 
 const MOTTOS = [
   "Stop guessing. Start studying.",
@@ -104,13 +104,13 @@ export default function Home() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="flex-1 w-full relative"
         >
-          <div className="relative rounded-[2rem] overflow-hidden shadow-2xl shadow-black/10 aspect-[4/5] md:aspect-square max-w-md mx-auto border-8 border-white">
+          <div className="relative rounded-[24px] overflow-hidden shadow-2xl shadow-black/10 aspect-[4/5] md:aspect-square max-w-md mx-auto border-8 border-white p-0">
             <img 
               src={heroImg} 
               alt="Cozy study spot in Vienna" 
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-[16px]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-[16px]" />
             <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg">
               <div className="flex items-center gap-3">
                 <div className="bg-primary/20 p-2 rounded-lg text-primary">

@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Coffee, Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield } from "lucide-react";
+import { Coffee, Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield, Info } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import logoPng from "@assets/11e7d118-d517-40b8-aeda-28b8432c632e-removebg-preview_1772058909148.png";
@@ -11,6 +11,7 @@ export function Navigation() {
   const navLinks = [
     { href: "/spots", label: "Browse", icon: LayoutGrid },
     { href: "/map", label: "Map", icon: Map },
+    { href: "/about", label: "About", icon: Info },
   ];
 
   if (isAuthenticated) {
