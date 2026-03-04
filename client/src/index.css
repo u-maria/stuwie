@@ -10,7 +10,7 @@
     --font-sans: 'DM Sans', sans-serif;
     --font-serif: 'Lora', serif;
 
-    /* Warm, neutral, beige/cream tool vibe */
+    /* Modernized palette with Baby Pink accent */
     --background: 40 33% 96%; /* #F8F5F0 */
     --foreground: 20 10% 15%; /* #2A2826 */
     
@@ -29,15 +29,15 @@
     --muted: 40 20% 92%;
     --muted-foreground: 20 5% 45%;
     
-    --accent: 120 20% 40%; /* Sage Green Accent */
-    --accent-foreground: 0 0% 100%;
+    --accent: 330 70% 85%; /* Baby Pink Accent */
+    --accent-foreground: 20 10% 15%;
     
     --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 100%;
     
     --border: 40 15% 85%;
     --input: 40 15% 85%;
-    --ring: 25 35% 45%;
+    --ring: 330 70% 85%; /* Pink focus ring */
     
     --radius: 1rem;
   }
@@ -53,6 +53,19 @@
     font-family: var(--font-serif);
     @apply tracking-tight;
   }
+  
+  a, button {
+    @apply transition-all duration-200;
+  }
+}
+
+/* Custom styles for baby pink subtle integration */
+.nav-link-active {
+  @apply text-primary border-b-2 border-accent;
+}
+
+.focus-pink:focus {
+  @apply ring-2 ring-accent ring-offset-2;
 }
 
 /* Fix for Leaflet controls on mobile */
@@ -62,7 +75,11 @@
 .leaflet-popup-content-wrapper {
   border-radius: var(--radius);
   font-family: var(--font-sans);
+  @apply shadow-2xl border-none;
 }
 .leaflet-popup-content {
-  margin: 12px;
+  margin: 0;
+}
+.leaflet-container {
+  font-family: var(--font-sans);
 }

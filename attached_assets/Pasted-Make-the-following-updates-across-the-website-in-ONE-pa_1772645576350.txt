@@ -1,0 +1,90 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output). IMPORTANT: do NOT remove anything from the hero prompt below — only ADD the new requirements I describe here. Keep changes scoped to UI/branding + map provider + hero featured card behavior.
+
+NEW REQUIREMENTS TO ADD (do these IN ADDITION to the hero card prompt below)
+
+A) REVERT MAP BACK TO LEAFLET
+- Revert the study spots map back to Leaflet (undo Google Maps integration).
+- Remove/disable @react-google-maps/api usage and any Google Maps API key dependency from the app.
+- Ensure the map still renders markers for the currently filtered dataset and updates when filters change.
+- Keep the same behavior you already had with Leaflet (marker click shows spot name/preview or opens spot).
+
+B) HEADER BRANDING: REPLACE “Vienna Study Spots” WITH STUWIE LOGO (PNG PROVIDED)
+- Replace the text “Vienna Study Spots” in the top navbar with the provided STUWIE logo PNG (local asset; do not use external URLs).
+- The logo should be clickable and route to home (/).
+- Remove the pixelated cup of coffee icon from the header entirely (it no longer matches the new identity).
+- Make the header feel modern/trendy: clean spacing, crisp alignment, slightly bolder nav typography, subtle hover states (not playful/retro).
+
+C) INCORPORATE BABY PINK AS A SUBTLE ACCENT COLOR
+- Since the new STUWIE logo includes baby pink, incorporate it tastefully across the UI as an accent (NOT overpowering).
+- Examples of where to apply:
+  - link hover/active state
+  - focus ring for inputs
+  - small accent elements (badges, chips outlines, small highlights)
+  - optionally the primary CTA button hover state
+- Keep the overall palette coherent with the current butter/sugar + brown vibe, but modernize it (more “brand new” and “trendy”, less “boring”).
+
+D) LOGO ASSET NOTES
+- The STUWIE logo PNG is already available in the project assets (use the provided file, no external links).
+- Ensure the logo displays sharply (proper sizing, no stretching; preserve transparency).
+- Provide a sensible responsive size (desktop ~120–160px wide, mobile smaller), and ensure the navbar height stays elegant.
+
+NOW APPLY THE FOLLOWING HERO SECTION PROMPT EXACTLY (DO NOT REMOVE ANYTHING FROM IT):
+
+"Make the following update to the HOME page hero section in ONE pass.
+
+GOAL
+Turn the right-side hero visual into a dynamic “Featured Spot” card that randomly displays one of the existing study spots on every page refresh, pulling real data from the same source used by the individual study spot pages.
+
+COPY (must match exactly)
+Add a small label above the card: “Try this spot today”
+
+BEHAVIOR
+1) On each page load/refresh:
+- Pick ONE random spot from the existing spots dataset (the same array/json/source used to render /spots and individual spot pages).
+- Render that spot in the hero card.
+
+2) Clicking anywhere on the hero card:
+- Navigates to that spot’s individual page (same route used elsewhere, e.g. /spots/:slug or whatever your app uses).
+
+3) Hover animation (make it feel responsive/premium):
+- Card slightly lifts and scales up (around 1.02–1.03).
+- Shadow becomes a bit stronger.
+- The info panel expands/reveals additional stats smoothly (transition 200–300ms, ease-out).
+- Cursor becomes pointer.
+
+UI REQUIREMENTS (Right-side card)
+- Keep the same rounded container style as now.
+- Image uses cover, maintains rounded corners, responsive.
+- Bottom overlay/info pill shows (default state):
+  - Spot name
+  - “{district} Wien • {wifiLabel}”
+  - Optional rating if available (e.g., “★ 4.7”)
+
+HOVER-REVEAL DETAILS (only if the fields exist in your data model)
+Show up to 3–5 quick facts (prefer small chips/rows):
+- WiFi (e.g. Fast / OK / Unknown)
+- Power outlets (Yes/No/Unknown)
+- Noise level (Quiet/Medium/Loud/Unknown)
+- Price (€, €€, €€€ if available)
+- “Open Sunday” or “Sunday-safe” if available
+
+DATA MAPPING / FALLBACKS
+- Do NOT hardcode “Café Sperl”. Use the random spot.
+- If any field is missing, omit it gracefully (no “undefined”).
+- If image is missing, use an existing default placeholder image from local assets (do not use external URLs).
+
+IMPLEMENTATION NOTES
+- Create a small reusable component for this hero featured spot card (e.g., FeaturedSpotHeroCard).
+- Ensure it imports/uses the existing spots data source (no duplicate data).
+- Make the label “Try this spot today” appear above the card and align nicely with the hero layout.
+- Keep everything responsive (mobile: card stacks below text, desktop: stays on right).
+
+DELIVERABLE
+- Commit the code changes so the homepage hero now shows a random featured spot card with the label “Try this spot today”, clickable to the spot page, with hover reveal animation and graceful fallbacks."
+
+AFTER IMPLEMENTATION CONFIRM:
+1) Leaflet map is restored and working with filtering
+2) Navbar shows STUWIE logo instead of “Vienna Study Spots”
+3) Pixel coffee icon removed
+4) Baby pink accent is integrated subtly and consistently
+5) Homepage hero shows random featured spot card + label + hover reveal + click-through
