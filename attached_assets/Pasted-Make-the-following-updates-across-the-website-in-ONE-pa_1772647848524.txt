@@ -1,0 +1,103 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output). Scope: UI/branding + spot detail completeness + routing for auth placeholder. Do NOT change database schema. Do NOT add new real spots. Keep existing content, just improve layout + add missing UI pieces.
+
+A) HOME PAGE: SCALE UP + REDUCE EMPTY SPACE (MODERN/READABLE)
+Goal: make the entire homepage feel bigger, bolder, more modern, and less “empty”.
+- Increase overall typography scale and spacing slightly across the HOME page:
+  - Increase hero headline font sizes, subheadline, body text, and button sizes (everything a bit bigger).
+  - Increase CTA button height/padding and font size.
+  - Reduce unused whitespace by slightly tightening vertical gaps where it feels too empty.
+  - Keep it clean and editorial, but more “obvious/readable” on desktop and mobile.
+- Make sure the hero right-side Featured Spot card remains prominent; scale it up slightly too so it feels like a real centerpiece.
+
+B) NAVBAR: MAKE STUWIE LOGO MUCH BIGGER + MORE PROMINENT
+- Increase the STUWIE logo size significantly (currently too small and gets lost).
+- Keep it sharp, preserve aspect ratio, no stretching.
+- Make navbar layout still balanced (logo left, nav center/right). If needed, slightly increase navbar height.
+- Ensure responsive behavior: logo remains noticeable on mobile too.
+
+C) COLOR DIRECTION: USE PASTEL MAGENTA (#EE9BB6)
+- Use EXACT color: #EE9BB6 (pastel magenta).
+- Replace any previously introduced baby pink accents with #EE9BB6.
+- Apply #EE9BB6 across the UI as the primary accent color (links, focus rings, star ratings, subtle highlights).
+- Avoid large background areas of this color; keep it as an accent.
+- Add 2–4 new small “fun” pastel magenta elements on the HOME page that feel modern and trendy (not childish).
+
+Examples:
+- subtle pastel magenta underline under highlighted words
+- small sparkle/star shapes near the featured spot card
+- soft pastel magenta decorative shapes in the hero background
+- thin pastel magenta divider lines or highlight accents
+
+The color should feel playful and branded, but still clean and modern.
+
+D) RATING STARS
+- Wherever rating stars appear (cards, featured spot, detail pages), set the star color to pastel magenta #EE9BB6.
+- Ensure star icons remain readable against the background.
+
+E) /SPOTS PAGE: HIDE “OPEN IN GOOGLE MAPS” BUTTON ON CARDS
+- On the /spots page (browse grid of study spots), remove/hide the “Open in Google Maps” button completely from the cards.
+- This action should ONLY appear on the individual study spot page.
+
+F) INDIVIDUAL STUDY SPOT PAGES: ADD MISSING OPENING HOURS + TAGS + MAPS LINK
+Right now the detail pages are missing crucial info.
+
+On each individual spot page display:
+1) Opening hours  
+   - Use the existing opening hours data already stored in the spots dataset (do NOT hardcode new values).
+   - Show “Open today: …” plus the full weekly schedule below it in a clean readable format.
+
+2) All relevant tags  
+   - Render the full tag array as pills, matching the tags used in the browse cards.
+
+3) “Open in Google Maps” button/link  
+   - Use each spot’s saved googleMapsUrl.
+   - Jonas Reindl uses: https://maps.app.goo.gl/NA4om2VM7UujvV6S8
+
+Ensure all of this is styled consistently with the new pastel magenta accents.
+
+G) DUMMY REGISTRATION PAGE + ROUTING (“SIGN UP” SHOULD GO SOMEWHERE)
+- Create a dedicated page/route for registration (e.g. /signup).
+- Add a “Sign Up” button in the navbar next to the existing “Sign In” button.
+- The new “Sign Up” button must navigate to /signup.
+
+The page is a placeholder for now (no real auth/db wiring), but it should look realistic:
+
+Page layout:
+- Title: “Create your account”
+- Form fields:
+  - Name
+  - Email
+  - Password
+- Primary button: “Create account”
+- Divider text: “or continue with”
+
+Social sign-in buttons:
+- Google
+- Apple
+- Facebook
+
+Important:
+- These buttons are purely visual placeholders (no authentication logic, no external auth libraries).
+
+Also include:
+- Link to “Sign in”
+- If /signin already exists, link to it.
+- Otherwise create a simple /signin placeholder page with similar styling.
+
+Keep the page on-brand:
+- clean centered card layout
+- pastel magenta (#EE9BB6) accents
+- modern spacing and typography.
+
+H) QUALITY CHECKS
+- Ensure the new sizing changes do not break mobile layout.
+- Make sure tags are consistent everywhere (same source-of-truth array).
+
+Confirm the following after implementation:
+
+1) Homepage elements are noticeably bigger and less empty  
+2) STUWIE logo is significantly larger and visually prominent  
+3) #EE9BB6 is used consistently as the accent color and rating stars are pastel magenta  
+4) Browse cards on /spots no longer show “Open in Google Maps”  
+5) Spot detail pages show opening hours, tags, and the “Open in Google Maps” button  
+6) Navbar contains a “Sign Up” button that leads to the new registration page

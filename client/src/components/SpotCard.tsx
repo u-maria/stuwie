@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { MapPin, Wifi, Plug, Star, Heart, BookmarkPlus, ExternalLink, Clock } from "lucide-react";
+import { MapPin, Wifi, Plug, Star, Heart, BookmarkPlus, Clock } from "lucide-react";
 import type { StudySpotResponse } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,7 +77,7 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
           <Button 
             size="icon" 
             variant="secondary" 
-            className={`h-8 w-8 rounded-full backdrop-blur-md bg-white/70 hover:bg-white border-0 ${isSaved ? 'text-accent' : 'text-muted-foreground'}`}
+            className={`h-8 w-8 rounded-full backdrop-blur-md bg-white/70 hover:bg-white border-0 ${isSaved ? 'text-[#EE9BB6]' : 'text-muted-foreground'}`}
             onClick={(e) => handleSave(e, "check_later")}
           >
             <BookmarkPlus className={`w-4 h-4 ${isSaved ? 'fill-current' : ''}`} />
@@ -93,7 +93,7 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
         </div>
 
         <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
-          <Star className="w-4 h-4 fill-primary text-primary" />
+          <Star className="w-4 h-4 fill-[#EE9BB6] text-[#EE9BB6]" />
           <span className="font-bold text-sm">{Number(spot.avgRating).toFixed(1)}</span>
           <span className="text-white/80 text-xs">({spot.reviewCount})</span>
         </div>
@@ -119,7 +119,7 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
           )}
         </div>
 
-        <div className="flex flex-wrap gap-2 mb-4">
+        <div className="mt-auto pt-4 border-t border-border/50 flex flex-wrap gap-2">
           {spot.hasWifi && (
             <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1 h-6">
               <Wifi className="w-3 h-3" /> WiFi
@@ -135,20 +135,6 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
               {String(tag)}
             </Badge>
           ))}
-        </div>
-
-        <div className="mt-auto pt-4 border-t border-border/50">
-          <Button 
-            asChild 
-            variant="outline" 
-            size="sm" 
-            className="w-full rounded-xl gap-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all"
-          >
-            <a href={(spot as any).googleMapsUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
-              <ExternalLink className="w-3.5 h-3.5" />
-              Open in Google Maps
-            </a>
-          </Button>
         </div>
       </div>
     </Link>

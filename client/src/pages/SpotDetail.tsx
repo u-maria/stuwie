@@ -1,5 +1,5 @@
 import { useRoute } from "wouter";
-import { MapPin, Wifi, Plug, Star, Clock, Globe, ArrowLeft, Heart, CheckCircle2, MessageSquare } from "lucide-react";
+import { MapPin, Wifi, Plug, Star, Clock, Globe, ArrowLeft, Heart, CheckCircle2, MessageSquare, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import { useSpot } from "@/hooks/use-spots";
 import { useReviews, useCreateReview } from "@/hooks/use-reviews";
@@ -10,6 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 export default function SpotDetail() {
   const [, params] = useRoute("/spots/:id");
@@ -59,122 +62,131 @@ export default function SpotDetail() {
     });
   };
 
+  const currentDayKey = DAY_KEYS[(new Date().getDay() + 6) % 7];
+  const todayHours = (spot.openingHours as any)?.[currentDayKey];
+
   return (
     <div className="min-h-screen bg-background pb-24">
       {/* Hero Section */}
       <div className="relative h-[40vh] md:h-[50vh] w-full">
-        {/* cafe interior large */}
         <img src={imageUrl} alt={spot.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         
-        <div className="absolute top-4 left-4">
-          <Button asChild variant="secondary" size="icon" className="rounded-full bg-white/20 backdrop-blur hover:bg-white border-0 text-white hover:text-black">
-            <Link href="/spots"><ArrowLeft className="w-5 h-5" /></Link>
+        <div className="absolute top-6 left-6">
+          <Button asChild variant="secondary" size="icon" className="rounded-full bg-white/20 backdrop-blur hover:bg-white border-0 text-white hover:text-black h-12 w-12">
+            <Link href="/spots"><ArrowLeft className="w-6 h-6" /></Link>
           </Button>
         </div>
 
-        <div className="absolute bottom-0 left-0 right-0 p-6 max-w-5xl mx-auto w-full">
-          <Badge className="bg-primary text-primary-foreground mb-3">{spot.district}</Badge>
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-white mb-2">{spot.name}</h1>
-          <div className="flex items-center gap-4 text-white/90">
-            <div className="flex items-center gap-1">
-              <Star className="w-5 h-5 fill-primary text-primary" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 max-w-6xl mx-auto w-full">
+          <Badge className="bg-[#EE9BB6] text-white mb-4 px-4 py-1 text-sm font-bold tracking-wider">{spot.district}</Badge>
+          <h1 className="text-5xl md:text-6xl font-serif font-bold text-white mb-4">{spot.name}</h1>
+          <div className="flex flex-wrap items-center gap-6 text-white/95 text-lg font-medium">
+            <div className="flex items-center gap-2">
+              <Star className="w-6 h-6 fill-[#EE9BB6] text-[#EE9BB6]" />
               <span className="font-bold">{Number(spot.avgRating).toFixed(1)}</span>
-              <span>({spot.reviewCount} reviews)</span>
+              <span className="opacity-80">({spot.reviewCount} reviews)</span>
             </div>
-            <div className="flex items-center gap-1">
-              <MapPin className="w-4 h-4" />
+            <div className="flex items-center gap-2">
+              <MapPin className="w-5 h-5" />
               <span>{spot.address}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col md:flex-row gap-12">
+      <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16 flex flex-col md:flex-row gap-16">
         {/* Main Content */}
-        <div className="flex-1 space-y-10">
+        <div className="flex-1 space-y-12">
           <section>
-            <h2 className="text-2xl font-serif font-bold mb-4">About</h2>
-            <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{spot.description}</p>
+            <h2 className="text-3xl font-serif font-bold mb-6">About</h2>
+            <p className="text-xl text-muted-foreground leading-relaxed whitespace-pre-line">{spot.description}</p>
+            <div className="flex flex-wrap gap-2 mt-8">
+               {spot.tags && Array.isArray(spot.tags) && spot.tags.map((tag, i) => (
+                <Badge key={i} variant="secondary" className="bg-secondary/70 text-secondary-foreground font-bold px-4 py-1.5 rounded-xl text-sm">
+                  {String(tag)}
+                </Badge>
+              ))}
+            </div>
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold mb-4">Amenities</h2>
-            <div className="flex flex-wrap gap-4">
+            <h2 className="text-3xl font-serif font-bold mb-8">Amenities</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {spot.hasWifi && (
-                <div className="flex items-center gap-3 p-4 bg-secondary/50 rounded-2xl flex-1 min-w-[200px]">
-                  <div className="bg-background p-2 rounded-full"><Wifi className="w-5 h-5 text-primary" /></div>
-                  <span className="font-medium">Fast WiFi</span>
+                <div className="flex items-center gap-4 p-5 bg-secondary/30 rounded-3xl">
+                  <div className="bg-background p-3 rounded-2xl shadow-sm"><Wifi className="w-6 h-6 text-[#EE9BB6]" /></div>
+                  <span className="font-bold text-lg">Fast WiFi</span>
                 </div>
               )}
               {spot.hasOutlets && (
-                <div className="flex items-center gap-3 p-4 bg-secondary/50 rounded-2xl flex-1 min-w-[200px]">
-                  <div className="bg-background p-2 rounded-full"><Plug className="w-5 h-5 text-primary" /></div>
-                  <span className="font-medium">Power Outlets</span>
+                <div className="flex items-center gap-4 p-5 bg-secondary/30 rounded-3xl">
+                  <div className="bg-background p-3 rounded-2xl shadow-sm"><Plug className="w-6 h-6 text-[#EE9BB6]" /></div>
+                  <span className="font-bold text-lg">Power Outlets</span>
                 </div>
               )}
               {spot.sundayOpen && (
-                <div className="flex items-center gap-3 p-4 bg-secondary/50 rounded-2xl flex-1 min-w-[200px]">
-                  <div className="bg-background p-2 rounded-full"><Clock className="w-5 h-5 text-primary" /></div>
-                  <span className="font-medium">Open Sundays</span>
+                <div className="flex items-center gap-4 p-5 bg-secondary/30 rounded-3xl">
+                  <div className="bg-background p-3 rounded-2xl shadow-sm"><Clock className="w-6 h-6 text-[#EE9BB6]" /></div>
+                  <span className="font-bold text-lg">Open Sundays</span>
                 </div>
               )}
             </div>
           </section>
 
           <section>
-            <h2 className="text-2xl font-serif font-bold mb-6 flex items-center gap-2">
-              <MessageSquare className="w-6 h-6 text-primary" /> 
+            <h2 className="text-3xl font-serif font-bold mb-8 flex items-center gap-3">
+              <MessageSquare className="w-8 h-8 text-[#EE9BB6]" /> 
               Reviews
             </h2>
             
             {isAuthenticated && (
-              <div className="bg-card p-6 rounded-2xl border border-border/50 shadow-sm mb-8">
-                <h3 className="font-bold mb-4">Leave a review</h3>
-                <div className="flex gap-2 mb-4">
+              <div className="bg-card p-8 rounded-3xl border border-border/50 shadow-md mb-12">
+                <h3 className="text-xl font-bold mb-6">Leave a review</h3>
+                <div className="flex gap-3 mb-6">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <button key={star} onClick={() => setRating(star)}>
-                      <Star className={`w-6 h-6 ${rating >= star ? "fill-primary text-primary" : "text-muted"}`} />
+                    <button key={star} onClick={() => setRating(star)} className="hover:scale-110 transition-transform">
+                      <Star className={`w-8 h-8 ${rating >= star ? "fill-[#EE9BB6] text-[#EE9BB6]" : "text-muted"}`} />
                     </button>
                   ))}
                 </div>
                 <Textarea 
                   placeholder="How was the vibe? Was the WiFi fast?" 
-                  className="mb-4 rounded-xl resize-none"
-                  rows={3}
+                  className="mb-6 rounded-2xl resize-none text-lg p-4 bg-background border-border/50 focus:ring-2 focus:ring-[#EE9BB6]"
+                  rows={4}
                   value={reviewText}
                   onChange={e => setReviewText(e.target.value)}
                 />
-                <Button onClick={submitReview} disabled={reviewMutation.isPending} className="rounded-xl">
+                <Button onClick={submitReview} disabled={reviewMutation.isPending} className="rounded-xl h-12 px-8 font-bold text-lg">
                   {reviewMutation.isPending ? "Submitting..." : "Submit Review"}
                 </Button>
               </div>
             )}
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {reviews?.length === 0 ? (
-                <p className="text-muted-foreground italic">No reviews yet. Be the first!</p>
+                <p className="text-xl text-muted-foreground italic">No reviews yet. Be the first!</p>
               ) : reviews?.map((review) => (
-                <div key={review.id} className="border-b border-border/50 pb-6 last:border-0">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center font-bold text-primary">
+                <div key={review.id} className="border-b border-border/40 pb-10 last:border-0">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-[#EE9BB6]/20 rounded-2xl flex items-center justify-center font-black text-[#EE9BB6] text-xl">
                         {review.user?.firstName?.[0] || review.user?.email?.[0] || 'U'}
                       </div>
                       <div>
-                        <div className="font-bold text-sm">{review.user?.firstName || 'Anonymous User'}</div>
-                        <div className="flex gap-0.5 mt-0.5">
+                        <div className="font-black text-lg">{review.user?.firstName || 'Anonymous User'}</div>
+                        <div className="flex gap-1 mt-1">
                           {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`w-3 h-3 ${i < review.rating ? "fill-primary text-primary" : "text-muted"}`} />
+                            <Star key={i} className={`w-4 h-4 ${i < review.rating ? "fill-[#EE9BB6] text-[#EE9BB6]" : "text-muted"}`} />
                           ))}
                         </div>
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-sm text-muted-foreground font-bold">
                       {new Date(review.createdAt!).toLocaleDateString()}
                     </div>
                   </div>
-                  <p className="text-foreground text-sm leading-relaxed mt-3">{review.text}</p>
+                  <p className="text-foreground/90 text-lg leading-relaxed mt-4">{review.text}</p>
                 </div>
               ))}
             </div>
@@ -182,37 +194,70 @@ export default function SpotDetail() {
         </div>
 
         {/* Sidebar Actions */}
-        <div className="md:w-80 space-y-6">
-          <div className="bg-card p-6 rounded-3xl shadow-lg border border-border/50 sticky top-24">
-            <h3 className="font-serif font-bold text-xl mb-6">Actions</h3>
+        <div className="md:w-96 space-y-8">
+          <div className="bg-card p-8 rounded-[32px] shadow-2xl border border-border/50 sticky top-28">
+            <h3 className="font-serif font-bold text-2xl mb-8">Quick Actions</h3>
             
             <Button 
-              className={`w-full justify-start h-12 rounded-xl mb-3 transition-all ${hasCheckedIn ? "bg-accent hover:bg-accent/90" : "bg-primary"}`}
+              className={`w-full justify-center h-16 rounded-2xl mb-4 text-xl font-black shadow-lg transition-all ${hasCheckedIn ? "bg-accent hover:bg-accent/90" : "bg-primary"}`}
               onClick={handleCheckIn}
               disabled={checkInMutation.isPending || hasCheckedIn}
             >
-              <CheckCircle2 className="w-5 h-5 mr-3" />
-              {hasCheckedIn ? "Checked In Today" : "Check-in Here"}
+              <CheckCircle2 className="w-6 h-6 mr-3" />
+              {hasCheckedIn ? "Checked In!" : "Check-in Here"}
             </Button>
             
             <Button 
               variant="outline" 
-              className={`w-full justify-start h-12 rounded-xl mb-6 border-2 transition-all ${isFavorite ? "border-destructive text-destructive" : ""}`}
+              className={`w-full justify-center h-16 rounded-2xl mb-8 border-3 text-xl font-black transition-all ${isFavorite ? "border-destructive text-destructive" : ""}`}
               onClick={handleFavorite}
               disabled={toggleSaveMutation.isPending}
             >
-              <Heart className={`w-5 h-5 mr-3 ${isFavorite ? "fill-destructive" : ""}`} />
-              {isFavorite ? "Saved to Favorites" : "Add to Favorites"}
+              <Heart className={`w-6 h-6 mr-3 ${isFavorite ? "fill-destructive" : ""}`} />
+              {isFavorite ? "In Favorites" : "Favorite Spot"}
             </Button>
 
-            <div className="space-y-4 pt-6 border-t border-border/50 text-sm">
-              <div className="flex items-center gap-3 text-muted-foreground">
-                <Globe className="w-4 h-4 text-primary" />
-                {spot.website ? (
-                  <a href={spot.website} target="_blank" rel="noreferrer" className="text-primary hover:underline truncate">
-                    {spot.website.replace(/^https?:\/\//, '')}
+            <div className="space-y-6 pt-8 border-t border-border/50">
+              <div>
+                <h4 className="font-black text-sm uppercase tracking-widest text-muted-foreground mb-4">Opening Hours</h4>
+                <div className="space-y-2">
+                   <div className="flex justify-between items-center bg-secondary/30 p-3 rounded-xl mb-4 border-2 border-primary/10">
+                    <span className="font-black text-sm">Open today</span>
+                    <span className="font-bold text-sm text-primary">
+                      {todayHours?.closed ? "Closed" : `${todayHours?.open} – ${todayHours?.close}`}
+                    </span>
+                  </div>
+                  <div className="space-y-2 px-1">
+                    {DAY_KEYS.map((key, i) => {
+                      const h = (spot.openingHours as any)?.[key];
+                      const isToday = key === currentDayKey;
+                      return (
+                        <div key={key} className={`flex justify-between text-sm ${isToday ? "font-black text-primary" : "text-muted-foreground font-bold"}`}>
+                          <span>{DAYS[i]}</span>
+                          <span>{h?.closed ? "Closed" : `${h?.open} – ${h?.close}`}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-6 border-t border-border/50 space-y-4">
+                <Button asChild variant="outline" className="w-full h-14 rounded-2xl gap-3 border-2 font-black text-lg hover:border-[#EE9BB6] hover:text-[#EE9BB6] transition-all">
+                  <a href={(spot as any).googleMapsUrl} target="_blank" rel="noreferrer">
+                    <ExternalLink className="w-5 h-5" />
+                    Open in Google Maps
                   </a>
-                ) : "No website"}
+                </Button>
+                
+                {spot.website && (
+                  <div className="flex items-center gap-3 text-muted-foreground px-2">
+                    <Globe className="w-5 h-5 text-[#EE9BB6]" />
+                    <a href={spot.website} target="_blank" rel="noreferrer" className="text-primary font-bold hover:underline truncate text-base">
+                      {spot.website.replace(/^https?:\/\//, '')}
+                    </a>
+                  </div>
+                )}
               </div>
             </div>
           </div>

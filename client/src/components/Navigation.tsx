@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield, Info } from "lucide-react";
+import { Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield, Info, UserPlus } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import st濒eLogo from "@assets/IMG_0627_1772645584092.PNG";
@@ -22,19 +22,19 @@ export function Navigation() {
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-lg border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16 items-center">
+        <div className="flex justify-between h-20 items-center">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
-              <img src={st濒eLogo} alt="STUWIE" className="h-8 md:h-10 w-auto object-contain" />
+              <img src={st濒eLogo} alt="STUWIE" className="h-12 md:h-16 w-auto object-contain" />
             </Link>
           </div>
 
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link 
                 key={link.href} 
                 href={link.href}
-                className={`flex items-center gap-1.5 text-sm font-bold tracking-tight transition-colors ${
+                className={`flex items-center gap-1.5 text-base font-bold tracking-tight transition-colors ${
                   location === link.href ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -45,8 +45,8 @@ export function Navigation() {
             {isAuthenticated && (
               <Link 
                 href="/admin/pending"
-                className={`flex items-center gap-1.5 text-sm font-bold tracking-tight transition-colors ${
-                  location === "/admin/pending" ? "text-accent" : "text-muted-foreground hover:text-accent"
+                className={`flex items-center gap-1.5 text-base font-bold tracking-tight transition-colors ${
+                  location === "/admin/pending" ? "text-[#EE9BB6]" : "text-muted-foreground hover:text-[#EE9BB6]"
                 }`}
               >
                 Admin
@@ -54,22 +54,27 @@ export function Navigation() {
             )}
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             {isAuthenticated ? (
               <div className="flex items-center gap-3">
                 <div className="hidden sm:flex flex-col items-end">
                   <span className="text-sm font-bold">{user?.firstName || user?.email}</span>
                 </div>
                 <Button variant="ghost" size="icon" onClick={() => logout()} className="text-muted-foreground hover:text-destructive rounded-full">
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-5 h-5" />
                 </Button>
               </div>
             ) : (
-              <Button asChild className="rounded-full shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all font-bold">
-                <a href="/api/login">
-                  Sign In
-                </a>
-              </Button>
+              <div className="flex items-center gap-3">
+                <Button asChild variant="ghost" className="hidden sm:flex rounded-full font-bold text-muted-foreground hover:text-foreground">
+                  <Link href="/signup">Sign Up</Link>
+                </Button>
+                <Button asChild className="rounded-full shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all font-bold px-6">
+                  <a href="/api/login">
+                    Sign In
+                  </a>
+                </Button>
+              </div>
             )}
           </div>
         </div>
@@ -90,6 +95,17 @@ export function Navigation() {
               <span className="text-[10px] font-bold uppercase tracking-wider">{link.label}</span>
             </Link>
           ))}
+          {!isAuthenticated && (
+             <Link 
+              href="/signup"
+              className={`flex flex-col items-center justify-center w-full h-full gap-1 ${
+                location === "/signup" ? "text-primary" : "text-muted-foreground"
+              }`}
+            >
+              <UserPlus className="w-5 h-5" />
+              <span className="text-[10px] font-bold uppercase tracking-wider">Join</span>
+            </Link>
+          )}
         </div>
       </div>
     </nav>

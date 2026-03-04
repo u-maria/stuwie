@@ -14,6 +14,7 @@ import Profile from "@/pages/Profile";
 import SubmitSpot from "@/pages/SubmitSpot";
 import AdminDashboard from "@/pages/AdminDashboard";
 import About from "@/pages/About";
+import Signup from "@/pages/Signup";
 
 function Router() {
   return (
@@ -26,6 +27,7 @@ function Router() {
       <Route path="/submit" component={SubmitSpot} />
       <Route path="/admin/pending" component={AdminDashboard} />
       <Route path="/about" component={About} />
+      <Route path="/signup" component={Signup} />
       <Route component={NotFound} />
     </Switch>
   );

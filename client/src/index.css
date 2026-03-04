@@ -10,7 +10,7 @@
     --font-sans: 'DM Sans', sans-serif;
     --font-serif: 'Lora', serif;
 
-    /* Modernized palette with Baby Pink accent */
+    /* Modernized palette with Pastel Magenta accent */
     --background: 40 33% 96%; /* #F8F5F0 */
     --foreground: 20 10% 15%; /* #2A2826 */
     
@@ -29,7 +29,7 @@
     --muted: 40 20% 92%;
     --muted-foreground: 20 5% 45%;
     
-    --accent: 330 70% 85%; /* Baby Pink Accent */
+    --accent: 340 68% 77%; /* Pastel Magenta #EE9BB6 */
     --accent-foreground: 20 10% 15%;
     
     --destructive: 0 60% 50%;
@@ -37,7 +37,7 @@
     
     --border: 40 15% 85%;
     --input: 40 15% 85%;
-    --ring: 330 70% 85%; /* Pink focus ring */
+    --ring: 340 68% 77%; /* Pastel Magenta focus ring */
     
     --radius: 1rem;
   }
@@ -59,12 +59,12 @@
   }
 }
 
-/* Custom styles for baby pink subtle integration */
+/* Custom styles for pastel magenta integration */
 .nav-link-active {
   @apply text-primary border-b-2 border-accent;
 }
 
-.focus-pink:focus {
+.focus-magenta:focus {
   @apply ring-2 ring-accent ring-offset-2;
 }
 
@@ -82,4 +82,20 @@
 }
 .leaflet-container {
   font-family: var(--font-sans);
+}
+
+.text-magenta {
+  color: #EE9BB6;
+}
+
+.bg-magenta {
+  background-color: #EE9BB6;
+}
+
+.border-magenta {
+  border-color: #EE9BB6;
+}
+
+.decoration-magenta {
+  text-decoration-color: #EE9BB6;
 }
