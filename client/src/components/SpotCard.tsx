@@ -1,11 +1,13 @@
 import { Link } from "wouter";
-import { MapPin, Wifi, Plug, Star, Heart, BookmarkPlus } from "lucide-react";
+import { MapPin, Wifi, Plug, Star, Heart, BookmarkPlus, ExternalLink, Clock } from "lucide-react";
 import type { StudySpotResponse } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleSavedSpot, useSavedSpots } from "@/hooks/use-user-activity";
 import { useToast } from "@/hooks/use-toast";
+
+const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 export function SpotCard({ spot }: { spot: StudySpotResponse }) {
   const { isAuthenticated } = useAuth();
@@ -31,13 +33,39 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
 
   const imageUrl = spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80";
 
+  const getHoursString = () => {
+    if (!spot.openingHours) return null;
+    const hours = spot.openingHours as any;
+    
+    // Check if Mon-Sun are same
+    const allSame = DAYS.every(d => JSON.stringify(hours[d]) === JSON.stringify(hours['mon']));
+    if (allSame) {
+      const h = hours['mon'];
+      return h.closed ? "Mon–Sun closed" : `Mon–Sun ${h.open}–${h.close}`;
+    }
+
+    // Mon-Fri same
+    const weekSame = ['tue', 'wed', 'thu', 'fri'].every(d => JSON.stringify(hours[d]) === JSON.stringify(hours['mon']));
+    // Sat-Sun same
+    const weekendSame = JSON.stringify(hours['sat']) === JSON.stringify(hours['sun']);
+
+    if (weekSame && weekendSame) {
+      const hw = hours['mon'];
+      const hwe = hours['sat'];
+      return `Mon–Fri ${hw.open}–${hw.close}, Sat–Sun ${hwe.open}–${hwe.close}`;
+    }
+
+    // fallback simplified display
+    const h = hours[DAYS[new Date().getDay()]];
+    return h?.closed ? "Closed today" : `Open today: ${h?.open}–${h?.close}`;
+  };
+
   return (
     <Link 
       href={`/spots/${spot.id}`}
       className="group flex flex-col bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
     >
       <div className="relative h-48 w-full overflow-hidden">
-        {/* cafe interior coffee shop */}
         <img 
           src={imageUrl} 
           alt={spot.name} 
@@ -72,33 +100,55 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
       </div>
 
       <div className="p-5 flex flex-col flex-grow">
-        <div className="flex justify-between items-start mb-2">
+        <div className="flex justify-between items-start mb-1">
           <h3 className="font-serif font-bold text-lg leading-tight line-clamp-1 group-hover:text-primary transition-colors">
             {spot.name}
           </h3>
         </div>
         
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4">
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span className="line-clamp-1">{spot.district}</span>
+        <div className="space-y-1.5 mb-4">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <MapPin className="w-3.5 h-3.5 shrink-0" />
+            <span className="line-clamp-1">{spot.address}</span>
+          </div>
+          {spot.openingHours && (
+            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+              <Clock className="w-3.5 h-3.5 shrink-0" />
+              <span>{getHoursString()}</span>
+            </div>
+          )}
         </div>
 
-        <div className="mt-auto pt-4 border-t border-border/50 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-4">
           {spot.hasWifi && (
-            <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1">
+            <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1 h-6">
               <Wifi className="w-3 h-3" /> WiFi
             </Badge>
           )}
           {spot.hasOutlets && (
-            <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1">
+            <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground font-normal gap-1 h-6">
               <Plug className="w-3 h-3" /> Outlets
             </Badge>
           )}
-          {spot.tags && Array.isArray(spot.tags) && spot.tags.slice(0, 1).map((tag, i) => (
-            <Badge key={i} variant="outline" className="font-normal text-muted-foreground border-border/50">
+          {spot.tags && Array.isArray(spot.tags) && spot.tags.map((tag, i) => (
+            <Badge key={i} variant="outline" className="font-normal text-muted-foreground border-border/50 h-6">
               {String(tag)}
             </Badge>
           ))}
+        </div>
+
+        <div className="mt-auto pt-4 border-t border-border/50">
+          <Button 
+            asChild 
+            variant="outline" 
+            size="sm" 
+            className="w-full rounded-xl gap-2 hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all"
+          >
+            <a href={(spot as any).googleMapsUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()}>
+              <ExternalLink className="w-3.5 h-3.5" />
+              Open in Google Maps
+            </a>
+          </Button>
         </div>
       </div>
     </Link>

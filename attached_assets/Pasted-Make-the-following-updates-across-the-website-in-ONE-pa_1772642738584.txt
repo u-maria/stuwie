@@ -1,0 +1,87 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output). Scope: UI + filtering + map provider. Do NOT change DB schema and do NOT add new spots.
+
+1) FIX TAGS (cards + filters)
+- Ensure each spot supports MULTIPLE tags (array of strings).
+- Render ALL tags on each spot card (pill style), not just a single tag.
+- The “Tags” filter options must be derived from the same source-of-truth as the card pills: unique flattened values from spot.tags across the dataset.
+- Filtering by tags must match the pills exactly (string equality).
+
+2) ADD OPENING HOURS DATA + DISPLAY (ALL 5 SPOTS)
+Add opening hours to each of the existing 5 spots (no new spots). Store as a structured weekly schedule per spot.
+
+Use these approved hours + addresses:
+
+A) das café — Burggasse 10, 1070 Wien  
+Mon–Wed 09:00–24:00  
+Thu–Fri 09:00–01:00  
+Sat 10:00–01:00  
+Sun 10:00–23:00  
+
+B) Jonas Reindl (Währinger Straße) — Währinger Straße 2–4, 1090 Wien  
+Mon–Fri 08:00–17:30  
+Sat–Sun 09:30–17:30  
+
+C) J. Hornig Kaffeebar — Siebensterngasse 29, 1070 Wien  
+Mon–Fri 08:00–19:00  
+Sat 09:00–19:00  
+Sun 10:00–18:00  
+
+D) Burggasse24 Café — Burggasse 24, 1070 Wien  
+Mon–Sun 10:00–22:00  
+
+E) 7stern Café — Siebensterngasse 31, 1070 Wien  
+Mon closed  
+Tue–Sat 10:00–23:00  
+Sun 10:00–18:00  
+
+- Display hours on each spot card in a clean compact block (example: “Hours: Tue–Sat 10–23, Sun 10–18”).
+- Optionally allow expanding to show the full weekly schedule.
+- Ensure the address is displayed clearly on the card if not already.
+
+3) MAKE “OPEN NOW” + “OPEN ON SUNDAY” FILTERS ACTUALLY CORRECT
+- Implement correct time-aware filtering based on the stored hours.
+- “Open on Sunday” = the spot is open at any time on Sunday.
+- “Open now” = check the current local day and time and compare it with the schedule.
+- Handle after-midnight closing correctly (example: closing at 01:00).
+- Filters must update both the cards and the map markers.
+
+4) ADD GOOGLE MAPS LINK PER SPOT
+Add a visible button or link on each spot card labeled “Open in Google Maps”.
+
+Use the following links:
+
+A) das café  
+https://www.google.com/maps/search/?api=1&query=das%20caf%C3%A9%20Burggasse%2010%201070%20Wien
+
+B) Jonas Reindl (Währinger Straße)  
+https://maps.app.goo.gl/NA4om2VM7UujvV6S8
+
+C) J. Hornig Kaffeebar  
+https://www.google.com/maps/search/?api=1&query=J.%20Hornig%20Kaffeebar%20Siebensterngasse%2029%201070%20Wien
+
+D) Burggasse24 Café  
+https://www.google.com/maps/search/?api=1&query=Burggasse24%20Caf%C3%A9%20Burggasse%2024%201070%20Wien
+
+E) 7stern Café  
+https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%207stern%20Siebensterngasse%2031%201070%20Wien
+
+- Store the Google Maps URL per spot and use it as the source of truth for the button.
+
+5) SWITCH MAP PROVIDER TO GOOGLE MAPS (PRIMARY)
+Replace the Leaflet map with Google Maps.
+
+Requirements:
+- Use @react-google-maps/api or a similar library.
+- Load the API key from env variable NEXT_PUBLIC_GOOGLE_MAPS_API_KEY.
+- Display markers for the currently filtered dataset.
+- When a marker is clicked, show the corresponding spot name or preview.
+- Ensure map markers update automatically when filters change.
+- Keep visual styling consistent with the website.
+
+After implementation confirm:
+
+1) each spot displays multiple tags correctly and tags filter matches them  
+2) opening hours are visible on cards  
+3) Open Now and Open on Sunday filters work correctly based on current time  
+4) each card has a working Google Maps link  
+5) the map uses Google Maps instead of Leaflet and markers reflect filtered spots

@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Search, SlidersHorizontal, X, Check } from "lucide-react";
 import { useSpots } from "@/hooks/use-spots";
 import { SpotCard } from "@/components/SpotCard";
@@ -11,12 +11,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
+const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+
 export default function SpotsPage() {
   const [district, setDistrict] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   
-  // Filters for the "More Filters" panel
   const [tempFilters, setTempFilters] = useState({
     openNow: false,
     openOnSunday: false,
@@ -28,13 +29,11 @@ export default function SpotsPage() {
 
   const [appliedFilters, setAppliedFilters] = useState(tempFilters);
 
-  // Sync basic district select with advanced filters
   useEffect(() => {
     setAppliedFilters(prev => ({ ...prev, district }));
     setTempFilters(prev => ({ ...prev, district }));
   }, [district]);
 
-  // Debounce search
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchQuery);
@@ -45,39 +44,17 @@ export default function SpotsPage() {
   const { data: spots, isLoading } = useSpots({ 
     status: "approved",
     ...(appliedFilters.district !== "all" && { district: appliedFilters.district }),
-    ...(appliedFilters.openOnSunday && { openOnSundays: "true" }),
     ...(appliedFilters.wifi && { hasWifi: "true" }),
     ...(appliedFilters.outlets && { hasOutlets: "true" })
   });
 
   const districts = [
-    "all",
-    "1. Innere Stadt",
-    "2. Leopoldstadt",
-    "3. Landstraße",
-    "4. Wieden",
-    "5. Margareten",
-    "6. Mariahilf",
-    "7. Neubau",
-    "8. Josefstadt",
-    "9. Alsergrund",
-    "10. Favoriten",
-    "11. Simmering",
-    "12. Meidling",
-    "13. Hietzing",
-    "14. Penzing",
-    "15. Rudolfsheim-Fünfhaus",
-    "16. Ottakring",
-    "17. Hernals",
-    "18. Währing",
-    "19. Döbling",
-    "20. Brigittenau",
-    "21. Floridsdorf",
-    "22. Donaustadt",
-    "23. Liesing"
+    "all", "1. Innere Stadt", "2. Leopoldstadt", "3. Landstraße", "4. Wieden", "5. Margareten",
+    "6. Mariahilf", "7. Neubau", "8. Josefstadt", "9. Alsergrund", "10. Favoriten", "11. Simmering",
+    "12. Meidling", "13. Hietzing", "14. Penzing", "15. Rudolfsheim-Fünfhaus", "16. Ottakring",
+    "17. Hernals", "18. Währing", "19. Döbling", "20. Brigittenau", "21. Floridsdorf", "22. Donaustadt", "23. Liesing"
   ];
 
-  // Dynamically generate all unique tags from spots
   const allTags = useMemo(() => {
     if (!spots) return [];
     const tagsSet = new Set<string>();
@@ -92,21 +69,40 @@ export default function SpotsPage() {
   const filteredSpots = useMemo(() => {
     if (!spots) return [];
     
+    const now = new Date();
+    const day = DAYS[now.getDay()];
+    const currentTime = now.getHours() * 60 + now.getMinutes();
+
     return spots.filter(spot => {
-      // Search logic
       if (debouncedSearch) {
         const searchStr = `${spot.name} ${spot.address} ${spot.district} ${spot.description} ${spot.tags?.join(" ")}`.toLowerCase();
         if (!searchStr.includes(debouncedSearch.toLowerCase())) return false;
       }
 
-      // Tag filtering logic
       if (appliedFilters.tags.length > 0) {
         const spotTags = (spot.tags || []) as string[];
         if (!appliedFilters.tags.every(tag => spotTags.includes(tag))) return false;
       }
 
-      // "Open Now" logic (simplified for frontend filtering if backend doesn't handle all complex time logic perfectly yet)
-      // Note: Backend might already handle some filters via useSpots query params, but we refine here
+      if (appliedFilters.openOnSunday) {
+        const hours = spot.openingHours as any;
+        if (!hours?.sun || hours.sun.closed) return false;
+      }
+
+      if (appliedFilters.openNow) {
+        const hours = (spot.openingHours as any)?.[day];
+        if (!hours || hours.closed) return false;
+        
+        const [oH, oM] = hours.open.split(':').map(Number);
+        const [cH, cM] = hours.close.split(':').map(Number);
+        const openVal = oH * 60 + oM;
+        let closeVal = cH * 60 + cM;
+        
+        // Handle after-midnight closing
+        if (closeVal <= openVal) closeVal += 24 * 60;
+        
+        if (currentTime < openVal || currentTime >= closeVal) return false;
+      }
       
       return true;
     });
@@ -114,20 +110,11 @@ export default function SpotsPage() {
 
   const handleApplyFilters = () => {
     setAppliedFilters(tempFilters);
-    if (tempFilters.district !== district) {
-      setDistrict(tempFilters.district);
-    }
+    if (tempFilters.district !== district) setDistrict(tempFilters.district);
   };
 
   const handleClearFilters = () => {
-    const defaultFilters = {
-      openNow: false,
-      openOnSunday: false,
-      wifi: false,
-      outlets: false,
-      district: "all",
-      tags: []
-    };
+    const defaultFilters = { openNow: false, openOnSunday: false, wifi: false, outlets: false, district: "all", tags: [] };
     setTempFilters(defaultFilters);
     setAppliedFilters(defaultFilters);
     setDistrict("all");
@@ -136,9 +123,7 @@ export default function SpotsPage() {
   const toggleTag = (tag: string) => {
     setTempFilters(prev => ({
       ...prev,
-      tags: prev.tags.includes(tag) 
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag]
+      tags: prev.tags.includes(tag) ? prev.tags.filter(t => t !== tag) : [...prev.tags, tag]
     }));
   };
 
@@ -147,7 +132,6 @@ export default function SpotsPage() {
       <div className="bg-secondary/30 border-b border-border/50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">Discover Spots</h1>
-          
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -158,89 +142,56 @@ export default function SpotsPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            
             <Select value={district} onValueChange={setDistrict}>
               <SelectTrigger className="w-full sm:w-[180px] bg-background border-border/50 rounded-xl h-11">
                 <SelectValue placeholder="All Districts" />
               </SelectTrigger>
               <SelectContent>
-                {districts.map(d => (
-                  <SelectItem key={d} value={d}>{d === "all" ? "All Districts" : d}</SelectItem>
-                ))}
+                {districts.map(d => <SelectItem key={d} value={d}>{d === "all" ? "All Districts" : d}</SelectItem>)}
               </SelectContent>
             </Select>
-
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="outline" className="h-11 rounded-xl bg-background shadow-sm border-border/50">
-                  <SlidersHorizontal className="w-4 h-4 mr-2" />
-                  More Filters
+                  <SlidersHorizontal className="w-4 h-4 mr-2" /> More Filters
                 </Button>
               </SheetTrigger>
               <SheetContent className="w-full sm:max-w-md overflow-y-auto">
-                <SheetHeader className="mb-6">
-                  <SheetTitle className="text-2xl font-serif">Filters</SheetTitle>
-                </SheetHeader>
-                
+                <SheetHeader className="mb-6"><SheetTitle className="text-2xl font-serif">Filters</SheetTitle></SheetHeader>
                 <div className="space-y-8 py-4">
                   <div className="space-y-4">
                     <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Availability</h3>
                     <div className="space-y-4">
                       <div className="flex items-center space-x-3">
-                        <Checkbox 
-                          id="openNow" 
-                          checked={tempFilters.openNow}
-                          onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, openNow: !!checked }))}
-                        />
+                        <Checkbox id="openNow" checked={tempFilters.openNow} onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, openNow: !!checked }))} />
                         <Label htmlFor="openNow" className="text-base font-medium">Open Now</Label>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <Checkbox 
-                          id="openSunday" 
-                          checked={tempFilters.openOnSunday}
-                          onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, openOnSunday: !!checked }))}
-                        />
+                        <Checkbox id="openSunday" checked={tempFilters.openOnSunday} onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, openOnSunday: !!checked }))} />
                         <Label htmlFor="openSunday" className="text-base font-medium">Open on Sunday</Label>
                       </div>
                     </div>
                   </div>
-
                   <div className="space-y-4">
                     <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Amenities</h3>
                     <div className="space-y-4">
                       <div className="flex items-center space-x-3">
-                        <Checkbox 
-                          id="wifi" 
-                          checked={tempFilters.wifi}
-                          onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, wifi: !!checked }))}
-                        />
+                        <Checkbox id="wifi" checked={tempFilters.wifi} onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, wifi: !!checked }))} />
                         <Label htmlFor="wifi" className="text-base font-medium">Wi-Fi</Label>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <Checkbox 
-                          id="outlets" 
-                          checked={tempFilters.outlets}
-                          onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, outlets: !!checked }))}
-                        />
+                        <Checkbox id="outlets" checked={tempFilters.outlets} onCheckedChange={(checked) => setTempFilters(prev => ({ ...prev, outlets: !!checked }))} />
                         <Label htmlFor="outlets" className="text-base font-medium">Power Outlets</Label>
                       </div>
                     </div>
                   </div>
-
                   <div className="space-y-4">
                     <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">District</h3>
                     <Select value={tempFilters.district} onValueChange={(val) => setTempFilters(prev => ({ ...prev, district: val }))}>
-                      <SelectTrigger className="w-full bg-background border-border/50 rounded-xl h-11">
-                        <SelectValue placeholder="Select District" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {districts.map(d => (
-                          <SelectItem key={d} value={d}>{d === "all" ? "All Districts" : d}</SelectItem>
-                        ))}
-                      </SelectContent>
+                      <SelectTrigger className="w-full bg-background border-border/50 rounded-xl h-11"><SelectValue placeholder="Select District" /></SelectTrigger>
+                      <SelectContent>{districts.map(d => <SelectItem key={d} value={d}>{d === "all" ? "All Districts" : d}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-
                   <div className="space-y-4">
                     <h3 className="font-bold text-sm uppercase tracking-wider text-muted-foreground">Tags</h3>
                     <div className="flex flex-wrap gap-2">
@@ -248,59 +199,32 @@ export default function SpotsPage() {
                         <Badge 
                           key={tag}
                           variant={tempFilters.tags.includes(tag) ? "default" : "outline"}
-                          className={`cursor-pointer py-1.5 px-3 rounded-full transition-all ${
-                            tempFilters.tags.includes(tag) 
-                              ? "bg-primary text-primary-foreground border-primary" 
-                              : "hover:bg-secondary border-border/50 text-muted-foreground"
-                          }`}
+                          className={`cursor-pointer py-1.5 px-3 rounded-full transition-all ${tempFilters.tags.includes(tag) ? "bg-primary text-primary-foreground border-primary" : "hover:bg-secondary border-border/50 text-muted-foreground"}`}
                           onClick={() => toggleTag(tag)}
                         >
-                          {tag}
-                          {tempFilters.tags.includes(tag) && <X className="ml-1.5 w-3 h-3" />}
+                          {tag} {tempFilters.tags.includes(tag) && <X className="ml-1.5 w-3 h-3" />}
                         </Badge>
                       ))}
                     </div>
                   </div>
                 </div>
-
                 <SheetFooter className="flex-col sm:flex-col gap-3 pt-8 mt-auto border-t">
-                  <Button className="w-full h-12 rounded-xl text-base" onClick={handleApplyFilters}>
-                    <Check className="mr-2 w-4 h-4" /> Apply Filters
-                  </Button>
-                  <Button variant="ghost" className="w-full h-11 rounded-xl text-muted-foreground" onClick={handleClearFilters}>
-                    Clear all
-                  </Button>
+                  <Button className="w-full h-12 rounded-xl text-base" onClick={handleApplyFilters}><Check className="mr-2 w-4 h-4" /> Apply Filters</Button>
+                  <Button variant="ghost" className="w-full h-11 rounded-xl text-muted-foreground" onClick={handleClearFilters}>Clear all</Button>
                 </SheetFooter>
               </SheetContent>
             </Sheet>
           </div>
         </div>
       </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="h-80 bg-secondary/50 animate-pulse rounded-2xl" />
-            ))}
-          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">{[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-80 bg-secondary/50 animate-pulse rounded-2xl" />)}</div>
         ) : filteredSpots.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="inline-flex bg-secondary p-4 rounded-full mb-4">
-              <Search className="w-8 h-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-xl font-bold font-serif mb-2">No spots found</h3>
-            <p className="text-muted-foreground">Try adjusting your filters or search terms.</p>
-          </div>
+          <div className="text-center py-20"><div className="inline-flex bg-secondary p-4 rounded-full mb-4"><Search className="w-8 h-8 text-muted-foreground" /></div><h3 className="text-xl font-bold font-serif mb-2">No spots found</h3><p className="text-muted-foreground">Try adjusting your filters or search terms.</p></div>
         ) : (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-          >
-            {filteredSpots.map((spot) => (
-              <SpotCard key={spot.id} spot={spot} />
-            ))}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredSpots.map((spot) => <SpotCard key={spot.id} spot={spot} />)}
           </motion.div>
         )}
       </div>

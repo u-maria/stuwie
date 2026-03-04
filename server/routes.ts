@@ -58,6 +58,7 @@ export async function registerRoutes(
             lat: 48.2038,
             lng: 16.3558,
             website: "https://www.das-cafe.wien",
+            googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=das%20caf%C3%A9%20Burggasse%2010%201070%20Wien",
             photo_url: "https://www.das-cafe.wien/fileadmin/user_upload/dascafe/_MAR9685_Kopie.jpg",
             openingHours: {
               mon: { open: "09:00", close: "24:00" },
@@ -78,6 +79,7 @@ export async function registerRoutes(
             lat: 48.2149,
             lng: 16.3608,
             website: "https://www.jonasreindl.at",
+            googleMapsUrl: "https://maps.app.goo.gl/NA4om2VM7UujvV6S8",
             photo_url: "https://cdn.prod.website-files.com/64b6780f84d27e4bfd91f2d6/6676cfbec142b79bf6bf0b67_jonasreindlalsergrundvienna-6676bd5815d50.webp",
             openingHours: {
               mon: { open: "08:00", close: "17:30" },
@@ -98,6 +100,7 @@ export async function registerRoutes(
             lat: 48.2018,
             lng: 16.3538,
             website: "https://jhornig.com",
+            googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=J.%20Hornig%20Kaffeebar%20Siebensterngasse%2029%201070%20Wien",
             photo_url: "https://www.area.at/assets/images/c/hornig-7-5s04bvq6f8epjv3.jpg",
             openingHours: {
               mon: { open: "08:00", close: "19:00" },
@@ -114,10 +117,11 @@ export async function registerRoutes(
           {
             name: "Burggasse24 Café",
             district: "7. Neubau",
-            address: "Burggasse 24/8, 1070 Wien",
+            address: "Burggasse 24, 1070 Wien",
             lat: 48.2045,
             lng: 16.3532,
             website: "https://www.burggasse24.com",
+            googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Burggasse24%20Caf%C3%A9%20Burggasse%2024%201070%20Wien",
             photo_url: "https://lokalfuehrer.stadtbekannt.at/wp-content/uploads/2016/04/Burggasse24-c-STADTBEKANNT.jpg",
             openingHours: {
               mon: { open: "10:00", close: "22:00" },
@@ -138,6 +142,7 @@ export async function registerRoutes(
             lat: 48.2017,
             lng: 16.3535,
             website: "https://www.7stern.net",
+            googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Caf%C3%A9%207stern%20Siebensterngasse%2031%201070%20Wien",
             photo_url: "https://www.vienna.at/2015/11/siebenstern-6001.jpg",
             openingHours: {
               mon: { closed: true },
@@ -153,15 +158,17 @@ export async function registerRoutes(
           }
         ];
 
-        // Wipe old seeds if they exist to avoid duplication/confusion
-        if (hasFakeSpots) {
-           // We can't easily TRUNCATE without direct SQL, but we can delete from storage if we add the method.
-           // For now, let's just create the new ones and we'll manually filter if needed or just assume fresh start if spots.length matches seed count.
-        }
-
         for (const s of realSpots) {
           const existing = spots.find(spot => spot.name === s.name);
-          if (!existing) {
+          if (existing) {
+            // Update existing to ensure hours and maps URL are set
+            await storage.updateStudySpot(existing.id, {
+              openingHours: s.openingHours,
+              googleMapsUrl: s.googleMapsUrl,
+              address: s.address,
+              tags: s.tags,
+            });
+          } else {
             const newSpot = await storage.createStudySpot({
               name: s.name,
               district: s.district,
@@ -169,6 +176,7 @@ export async function registerRoutes(
               lat: s.lat,
               lng: s.lng,
               openingHours: s.openingHours,
+              googleMapsUrl: s.googleMapsUrl,
               sundayOpen: true,
               hasWifi: true,
               hasOutlets: true,

@@ -15,6 +15,7 @@ export const studySpots = pgTable("study_spots", {
   lng: doublePrecision("lng"),
   openingHours: jsonb("opening_hours"), // { monday: { open: "08:00", close: "20:00", closed: false }, ... }
   sundayOpen: boolean("sunday_open").default(false),
+  googleMapsUrl: text("google_maps_url"),
   hasWifi: boolean("has_wifi").default(false),
   hasOutlets: boolean("has_outlets").default(false),
   website: text("website"),
