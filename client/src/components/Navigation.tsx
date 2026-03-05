@@ -20,12 +20,12 @@ export function Navigation() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-lg border-b border-border/50">
+    <nav className="sticky top-0 z-50 w-full bg-background/60 backdrop-blur-xl border-b border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
-              <img src={st濒eLogo} alt="STUWIE" className="h-12 md:h-16 w-auto object-contain" />
+              <img src={st濒eLogo} alt="STUWIE" className="h-16 md:h-20 w-auto object-contain" />
             </Link>
           </div>
 
@@ -70,9 +70,9 @@ export function Navigation() {
                   <Link href="/signup">Sign Up</Link>
                 </Button>
                 <Button asChild className="rounded-full shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all font-bold px-6">
-                  <a href="/api/login">
+                  <Link href="/signup">
                     Sign In
-                  </a>
+                  </Link>
                 </Button>
               </div>
             )}

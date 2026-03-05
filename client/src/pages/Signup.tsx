@@ -32,7 +32,10 @@ export default function Signup() {
             <Input type="password" placeholder="••••••••" className="h-14 rounded-2xl border-2 focus:ring-2 focus:ring-[#EE9BB6] text-lg px-5 font-medium" />
           </div>
 
-          <Button className="w-full h-16 rounded-2xl text-xl font-black shadow-lg shadow-[#EE9BB6]/20 mt-4 bg-primary hover:bg-primary/90">
+          <Button 
+            className="w-full h-16 rounded-2xl text-xl font-black shadow-lg shadow-[#EE9BB6]/20 mt-4 bg-primary hover:bg-primary/90"
+            onClick={(e) => e.preventDefault()}
+          >
             Create account
           </Button>
 
@@ -46,20 +49,20 @@ export default function Signup() {
           </div>
 
           <div className="grid grid-cols-3 gap-4">
-            <Button variant="outline" className="h-14 rounded-2xl border-2 hover:border-[#EE9BB6] hover:bg-[#EE9BB6]/5 transition-all">
+            <Button variant="outline" className="h-14 rounded-2xl border-2 hover:border-[#EE9BB6] hover:bg-[#EE9BB6]/5 transition-all" onClick={(e) => e.preventDefault()}>
               <SiGoogle className="w-6 h-6" />
             </Button>
-            <Button variant="outline" className="h-14 rounded-2xl border-2 hover:border-[#EE9BB6] hover:bg-[#EE9BB6]/5 transition-all">
+            <Button variant="outline" className="h-14 rounded-2xl border-2 hover:border-[#EE9BB6] hover:bg-[#EE9BB6]/5 transition-all" onClick={(e) => e.preventDefault()}>
               <SiApple className="w-6 h-6" />
             </Button>
-            <Button variant="outline" className="h-14 rounded-2xl border-2 hover:border-[#EE9BB6] hover:bg-[#EE9BB6]/5 transition-all">
+            <Button variant="outline" className="h-14 rounded-2xl border-2 hover:border-[#EE9BB6] hover:bg-[#EE9BB6]/5 transition-all" onClick={(e) => e.preventDefault()}>
               <SiFacebook className="w-6 h-6" />
             </Button>
           </div>
 
           <p className="text-center text-sm font-bold text-muted-foreground mt-8">
             Already have an account?{" "}
-            <Link href="/api/login" className="text-[#EE9BB6] hover:underline">
+            <Link href="/signup" className="text-[#EE9BB6] hover:underline">
               Sign in
             </Link>
           </p>

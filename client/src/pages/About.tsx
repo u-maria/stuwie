@@ -43,8 +43,8 @@ export default function About() {
             </p>
             
             <div className="pt-8">
-              <Button asChild variant="default" className="rounded-xl h-12 px-8 shadow-lg shadow-primary/20 hover:shadow-xl transition-all">
-                <a href="#">
+              <Button asChild variant="default" className="rounded-xl h-12 px-8 shadow-lg shadow-[#EE9BB6]/20 hover:shadow-xl transition-all bg-primary hover:bg-primary/90 font-bold">
+                <a href="#" onClick={(e) => e.preventDefault()}>
                   Here is the contact form: link
                 </a>
               </Button>

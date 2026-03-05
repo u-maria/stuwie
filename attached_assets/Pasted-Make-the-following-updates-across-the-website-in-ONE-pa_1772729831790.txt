@@ -1,0 +1,74 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output). Scope: UI polish + basic legal pages + routing robustness + button audit. Do NOT change database schema. Do NOT add new real spots. Keep existing content, just improve layout + fix navigation/actions.
+
+GOAL: This is a demo/portfolio prototype. Communicate that clearly and make every button behave predictably (no crashes).
+
+A) GLOBAL TOP ANNOUNCEMENT BAR (EVERY PAGE)
+- Add a thin announcement bar ABOVE the main navbar on EVERY page (global layout, not per-page).
+- Style: subtle, modern, not “warning”.
+  - Height ~32–36px, small text, centered.
+  - Background: very light neutral with a hairline bottom border.
+- Copy (exact):
+  “Prototype demo — built for learning & portfolio purposes. Not an active service.”
+- Add a small “×” close icon on the right.
+  - On dismiss: hide bar and persist via localStorage (e.g. key: stuwie_demo_bar_dismissed=true).
+  - If localStorage fails, hide for the session.
+
+B) HEADER/NAVBAR POLISH
+- Make the header/navbar background MORE TRANSPARENT for a fresher look (use a subtle blur/backdrop if already used in the design system).
+- Keep readability: text and buttons must remain clearly legible on all pages.
+- Increase the STUWIE logo size noticeably (make it feel like a real brand mark).
+- Ensure spacing stays clean on mobile (no wrapping glitches).
+
+C) AUTH ROUTING SAFETY FIX
+- The “Sign in” button currently crashes the browser. For demo purposes, make “Sign in” lead to the SAME destination as “Sign up” (same route/page/component), so it never crashes.
+- Also add basic defensive code so clicking “Sign in” cannot trigger an infinite loop, repeated navigation, or unhandled exception.
+
+D) CREATE A BASIC FOOTER (FOOTER DOES NOT EXIST YET)
+- Add a simple footer component that appears on EVERY page.
+- Keep it minimal, clean, and responsive.
+- Footer should include:
+  1) A muted demo line:
+     “STUWIE is a demo project created to showcase product thinking and web development.”
+  2) Links: “Privacy Policy” and “Legal Notice”
+  3) Copyright line (use current year 2026):
+     “© 2026 Maria Umerkina. All rights reserved.”
+- Make sure footer links are accessible (keyboard focus styles) and work on mobile.
+
+E) ADD TWO NEW PAGES + ROUTES (ENGLISH)
+1) /privacy (Privacy Policy)
+- Write a SHORT, honest privacy policy suitable for a demo/portfolio site.
+- Do NOT claim “we collect no data at all”. Instead acknowledge technical data needed to operate the site (e.g., server logs, IP address for security/stability) in generic terms.
+- Include sections:
+  - Who operates the site: Maria Umerkina (Vienna, Austria)
+  - What data may be processed (technical access data/logs)
+  - Purpose (security, stability, delivery of the website)
+  - Cookies (state whether you use only technically necessary cookies; if you use analytics/tracking, list it — otherwise state you do not use tracking/marketing cookies)
+  - Contact email (use an existing site email if present; otherwise create a neutral contact email placeholder like contact@stuwie.example and mark it as placeholder)
+  - User rights (brief: access, deletion, objection; keep short)
+
+2) /legal (Legal Notice)
+- Title: “Legal Notice”
+- Content (include exactly these facts):
+  - Name: Maria Umerkina
+  - Location: Vienna, Austria
+  - Purpose: This website is a demonstration project created for educational and portfolio purposes to showcase the author’s approach to web development and digital business thinking. It is not an active service. Any information shown is illustrative and may be incomplete or outdated.
+  - Add a short disclaimer: no guarantee for accuracy; data can change.
+- Keep it concise (about 10–20 lines).
+
+F) SITE-WIDE BUTTON & LINK AUDIT (TROUBLESHOOTING)
+- Audit the entire UI for clickable elements (buttons/links/icons).
+- Every button must either:
+  - navigate to a valid route, OR
+  - open a modal, OR
+  - trigger a clearly visible action (toast, state change), OR
+  - be explicitly disabled with a tooltip/label “Demo” / “Coming soon”.
+- Fix any broken hrefs, missing onClick handlers, or routes that 404.
+- Prevent crashes: add error boundaries or try/catch where appropriate for navigation handlers and any code that depends on undefined data.
+- Ensure no button triggers repeated re-renders or infinite loops.
+
+G) FINAL CHECKLIST
+- Confirm: announcement bar appears everywhere and can be dismissed.
+- Confirm: footer exists on every page and links to /privacy and /legal.
+- Confirm: “Sign in” no longer crashes and goes to the sign-up destination.
+- Confirm: all buttons have clear destinations/actions and nothing 404s.
+Deliver the code changes cleanly with minimal churn.

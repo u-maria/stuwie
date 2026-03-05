@@ -64,6 +64,10 @@
   @apply text-primary border-b-2 border-accent;
 }
 
+.focus-magenta:focus-visible {
+  @apply ring-2 ring-accent ring-offset-2 outline-none;
+}
+
 .focus-magenta:focus {
   @apply ring-2 ring-accent ring-offset-2;
 }
