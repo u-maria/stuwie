@@ -59,6 +59,18 @@ export default function SpotDetail() {
   const hasCheckedIn = checkIns?.some(c => c.spotId === spot.id);
   const imageUrl = spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1920&q=80";
 
+  const handleCheckIn = () => {
+    if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
+    checkInMutation.mutate(spot.id, {
+      onSuccess: () => toast({ title: "Checked in successfully!" })
+    });
+  };
+
+  const handleFavorite = () => {
+    if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
+    toggleSaveMutation.mutate({ spotId: spot.id, listType: "favorite" });
+  };
+
   const submitReview = () => {
     if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
     if (!reviewText.trim()) return;
