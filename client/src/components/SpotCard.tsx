@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useToggleSavedSpot, useSavedSpots } from "@/hooks/use-user-activity";
 import { useToast } from "@/hooks/use-toast";
+import { getSpotStats } from "@/lib/reviews-data";
 
 const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
@@ -17,6 +18,8 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
 
   const isFavorite = savedSpots?.some(s => s.spotId === spot.id && s.listType === "favorite");
   const isSaved = savedSpots?.some(s => s.spotId === spot.id && s.listType === "check_later");
+
+  const stats = getSpotStats(spot.id);
 
   const handleSave = (e: React.MouseEvent, type: "favorite" | "check_later") => {
     e.preventDefault();
@@ -36,10 +39,8 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
   const getHoursString = () => {
     if (!spot.openingHours) return null;
     const hours = spot.openingHours as any;
-    
-    // Vienna time handling
     const viennaNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Vienna"}));
-    const currentDay = viennaNow.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const currentDay = viennaNow.getDay();
     const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     const todayKey = dayMap[currentDay];
     const todayHours = hours[todayKey];
@@ -52,7 +53,7 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
   return (
     <Link 
       href={`/spots/${spot.id}`}
-      className="group flex flex-col bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
+      className="group flex flex-col bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative animate-reveal"
     >
       <div className="relative h-48 w-full overflow-hidden">
         <img 
@@ -83,14 +84,16 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
 
         <div className="absolute bottom-3 left-3 flex items-center gap-1.5 text-white">
           <Star className="w-4 h-4 fill-[#EE9BB6] text-[#EE9BB6]" />
-          <span className="font-bold text-sm">{Number(spot.avgRating).toFixed(1)}</span>
-          <span className="text-white/80 text-xs">({spot.reviewCount})</span>
+          <span className="font-bold text-sm">
+            {stats.reviewCount > 0 ? stats.avgRating.toFixed(1) : "New"}
+          </span>
+          {stats.reviewCount > 0 && <span className="text-white/80 text-xs">({stats.reviewCount})</span>}
         </div>
       </div>
 
       <div className="p-5 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-1">
-          <h3 className="font-serif font-bold text-lg leading-tight line-clamp-1 group-hover:text-primary transition-colors">
+          <h3 className="font-bold text-lg leading-tight line-clamp-1 group-hover:text-primary transition-colors">
             {spot.name}
           </h3>
         </div>

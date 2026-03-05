@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import { Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield, Info, UserPlus } from "lucide-react";
+import { Map, LayoutGrid, User, PlusCircle, LogIn, LogOut, Shield, Info, UserPlus, Home as HomeIcon } from "lucide-react";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import st濒eLogo from "@assets/IMG_0627_1772645584092.PNG";
@@ -9,6 +9,7 @@ export function Navigation() {
   const { user, isAuthenticated, logout } = useAuth();
 
   const navLinks = [
+    { href: "/", label: "Home", icon: HomeIcon },
     { href: "/spots", label: "Browse", icon: LayoutGrid },
     { href: "/map", label: "Map", icon: Map },
     { href: "/about", label: "About", icon: Info },
@@ -25,7 +26,7 @@ export function Navigation() {
         <div className="flex justify-between h-20 items-center">
           <div className="flex items-center gap-2">
             <Link href="/" className="flex items-center transition-opacity hover:opacity-80">
-              <img src={st濒eLogo} alt="STUWIE" className="h-16 md:h-20 w-auto object-contain" />
+              <img src={st濒eLogo} alt="STUWIE" className="h-12 md:h-16 lg:h-20 w-auto object-contain block" />
             </Link>
           </div>
 
@@ -34,22 +35,28 @@ export function Navigation() {
               <Link 
                 key={link.href} 
                 href={link.href}
-                className={`flex items-center gap-1.5 text-base font-bold tracking-tight transition-colors ${
+                className={`flex items-center gap-1.5 text-base font-bold tracking-tight transition-colors relative py-2 ${
                   location === link.href ? "text-primary" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {link.label}
+                {location === link.href && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full" />
+                )}
               </Link>
             ))}
             
             {isAuthenticated && (
               <Link 
                 href="/admin/pending"
-                className={`flex items-center gap-1.5 text-base font-bold tracking-tight transition-colors ${
+                className={`flex items-center gap-1.5 text-base font-bold tracking-tight transition-colors relative py-2 ${
                   location === "/admin/pending" ? "text-[#EE9BB6]" : "text-muted-foreground hover:text-[#EE9BB6]"
                 }`}
               >
                 Admin
+                {location === "/admin/pending" && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full" />
+                )}
               </Link>
             )}
           </div>

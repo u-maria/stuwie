@@ -4,10 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SiGoogle, SiApple, SiFacebook } from "react-icons/si";
 import { Link } from "wouter";
+import { SEO } from "@/components/SEO";
 
 export default function Signin() {
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-background flex items-center justify-center p-6">
+      <SEO 
+        title="Sign In" 
+        description="Sign in to your STUWIE account to manage your saved study spots." 
+        path="/signin"
+      />
       <motion.div 
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

@@ -1,8 +1,14 @@
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 export default function Privacy() {
   return (
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6">
+      <SEO 
+        title="Privacy Policy" 
+        description="Privacy information for STUWIE demonstration project. No tracking cookies or marketing." 
+        path="/privacy"
+      />
       <div className="max-w-2xl mx-auto space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

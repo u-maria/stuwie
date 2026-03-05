@@ -1,0 +1,65 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output). Scope: UI/branding + reviews→ratings logic + SEO + nav/mobile fixes + light motion. Do NOT change database schema. Do NOT remove existing spots. Keep the current beige/brown visual style. Keep everything stable and responsive.
+
+A) REVIEWS → RATINGS (must actually affect displayed rating)
+1) Add demo reviews (front-end seed data only; no DB changes) for at least 5 existing spots.
+   - Use typical German/Austrian first names (avoid generic English names). Examples you may use: Anna, Lukas, Tobias, Julia, Katharina, Stefan, Felix, Leonie, Marie, David, Franziska, Markus, Hannah, Paul, Simon, Theresa, Jakob, Lisa, Andreas, Sarah, Michael, Verena.
+   - Each review: { spotId, firstName, rating (1–5, allow halves), date, text } with short realistic Vienna-student comments (WiFi, outlets, noise, staff, seating).
+2) Ratings must be computed from these reviews:
+   - Compute average rating per spot from all its demo reviews.
+   - Compute review count per spot.
+   - Round display to 1 decimal (e.g., 4.3) and show (count) next to it.
+   - Update any rating shown on cards (Browse grid), hero featured spot card, and spot detail page to use this computed rating + count.
+   - If a spot has no reviews, keep 0.0 (0) OR show “New” (decide one consistent approach and apply everywhere).
+3) Make sure sorting/filtering by rating (if it exists) uses the computed ratings.
+
+B) TYPOGRAPHY — switch primary font to San Francisco
+- Update the global font stack to use Apple’s San Francisco as the primary UI font:
+  - Use: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif
+- Apply globally (body + headings + buttons + nav) and remove conflicting font declarations so it’s consistent.
+- Keep the hero’s “focus space” accent style if you have a special font there, but ensure the default site font is SF across the UI.
+
+C) SEO — improve visibility (basic but correct)
+- Add/confirm these:
+  1) Unique page titles + meta descriptions for: Home, Browse, Map, About, Legal Notice, Sign In, Sign Up.
+  2) Canonical URLs per page.
+  3) Open Graph + Twitter card tags (title, description, preview image if available).
+  4) robots.txt (allow indexing unless there is a strong reason not to).
+  5) sitemap.xml including all public routes.
+  6) Ensure semantic headings: one H1 per page, logical H2/H3 structure.
+  7) Add structured data (JSON-LD):
+     - For site/org: WebSite + Organization.
+     - For individual study spots pages: LocalBusiness (or CafeOrCoffeeShop / Library where appropriate), include name, address (Vienna), and aggregateRating (from computed rating + count) IF count>0.
+- Keep SEO text honest (this is a demo project), but do not hide the site from indexing unless required.
+
+D) NAVIGATION — add Home + improve nav clarity
+1) Add a “Home” link/button in the navbar (left side near logo, or first item).
+2) Ensure navbar includes clear items: Home, Browse, Map, About.
+3) Optional extra nav if it improves UX (only if needed and not clutter):
+   - “Contact” (routes to /contact or anchors to contact section on About)
+   - “Legal” (or “Impressum”) in footer rather than top nav unless you think it’s necessary in nav.
+4) Make sure active link styling is visible (subtle underline or color shift).
+
+E) MOBILE — fix logo visibility
+- On mobile view, the logo is currently not visible.
+- Debug and fix:
+  - Ensure it is not hidden by CSS (display:none), clipped by overflow, or too low contrast.
+  - Increase contrast/size slightly on mobile and ensure it sits within the nav bar without pushing everything off-screen.
+  - Verify on small widths (e.g., 320–390px): logo visible, nav usable, auth buttons accessible via menu if needed.
+- If you use a hamburger menu on mobile, ensure the logo remains visible in the header bar.
+
+F) LIGHT SCROLL / HOVER ANIMATIONS — fun but safe
+- Add subtle, performance-friendly animations that won’t break layout:
+  - Cards: gentle hover lift + shadow.
+  - Sections: small fade/slide-in on scroll (IntersectionObserver or lightweight library already in use).
+  - Hero featured card: very subtle float or fade-in on load.
+- Respect “prefers-reduced-motion” and disable animations for users who prefer reduced motion.
+
+G) QA PASS — stability + routing
+- Re-check all buttons/links:
+  Home, Browse, Map, About, Sign Up, Sign In, spot cards, search, filters, contact CTA, legal links.
+- Ensure no crashes; if something is placeholder, show a friendly toast/message instead of failing.
+- Keep the sign-in route separate (/signin) and stable.
+
+Deliverable:
+- Output only code changes / file edits needed (no long explanations).
+- Keep changes minimal and consistent with existing architecture.

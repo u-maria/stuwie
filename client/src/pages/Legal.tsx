@@ -1,8 +1,14 @@
 import { motion } from "framer-motion";
+import { SEO } from "@/components/SEO";
 
 export default function Legal() {
   return (
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6">
+      <SEO 
+        title="Legal Notice" 
+        description="Legal information and provider details for the STUWIE demonstration project." 
+        path="/legal"
+      />
       <div className="max-w-2xl mx-auto space-y-12">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

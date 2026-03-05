@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 @import "leaflet/dist/leaflet.css";
 
 @tailwind base;
@@ -7,7 +7,7 @@
 
 @layer base {
   :root {
-    --font-sans: 'DM Sans', sans-serif;
+    --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     --font-serif: 'Lora', serif;
 
     /* Modernized palette with Pastel Magenta accent */
@@ -50,12 +50,43 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-serif);
     @apply tracking-tight;
+    font-family: var(--font-sans); /* Overriding serif for global SF consistency as requested */
+  }
+
+  /* Specific serif use for brand/hero if needed */
+  .font-serif {
+    font-family: var(--font-serif);
   }
   
   a, button {
     @apply transition-all duration-200;
+  }
+}
+
+/* Scroll animations */
+@layer utilities {
+  .animate-reveal {
+    animation: reveal 0.8s cubic-bezier(0, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes reveal {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-reveal {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 }
 

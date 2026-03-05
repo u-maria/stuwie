@@ -10,6 +10,8 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetFooter
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
+import { getSpotStats } from "@/lib/reviews-data";
 
 const DAYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
@@ -41,12 +43,20 @@ export default function SpotsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const { data: spots, isLoading } = useSpots({ 
+  const { data: rawSpots, isLoading } = useSpots({ 
     status: "approved",
     ...(appliedFilters.district !== "all" && { district: appliedFilters.district }),
     ...(appliedFilters.wifi && { hasWifi: "true" }),
     ...(appliedFilters.outlets && { hasOutlets: "true" })
   });
+
+  const spots = useMemo(() => {
+    if (!rawSpots) return [];
+    return rawSpots.map(spot => ({
+      ...spot,
+      ...getSpotStats(spot.id)
+    })).sort((a, b) => (b.avgRating || 0) - (a.avgRating || 0));
+  }, [rawSpots]);
 
   const districts = [
     "all", "1. Innere Stadt", "2. Leopoldstadt", "3. Landstraße", "4. Wieden", "5. Margareten",
@@ -108,9 +118,7 @@ export default function SpotsPage() {
         const openVal = oH * 60 + oM;
         let closeVal = cH * 60 + cM;
         
-        // Handle after-midnight closing
         if (closeVal <= openVal) closeVal += 24 * 60;
-        
         if (currentTime < openVal || currentTime >= closeVal) return false;
       }
       
@@ -139,6 +147,11 @@ export default function SpotsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-8">
+      <SEO 
+        title="Browse Study Spots" 
+        description="Explore the best study spots in Vienna. Filter by district, WiFi, power outlets, and Sunday availability." 
+        path="/spots"
+      />
       <div className="bg-secondary/30 border-b border-border/50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">Discover Spots</h1>
@@ -233,9 +246,9 @@ export default function SpotsPage() {
         ) : filteredSpots.length === 0 ? (
           <div className="text-center py-20"><div className="inline-flex bg-secondary p-4 rounded-full mb-4"><Search className="w-8 h-8 text-muted-foreground" /></div><h3 className="text-xl font-bold font-serif mb-2">No spots found</h3><p className="text-muted-foreground">Try adjusting your filters or search terms.</p></div>
         ) : (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredSpots.map((spot) => <SpotCard key={spot.id} spot={spot} />)}
-          </motion.div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredSpots.map((spot) => <SpotCard key={spot.id} spot={spot as any} />)}
+          </div>
         )}
       </div>
     </div>

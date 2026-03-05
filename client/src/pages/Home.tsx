@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
 import { useSpots } from "@/hooks/use-spots";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
+import { getSpotStats } from "@/lib/reviews-data";
 
 const MOTTOS = [
   "Stop guessing. Start studying.",
@@ -27,10 +29,11 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
 
   if (!featuredSpot) return null;
 
+  const stats = getSpotStats(featuredSpot.id);
   const imageUrl = featuredSpot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80";
 
   return (
-    <div className="space-y-4 w-full max-w-lg mx-auto relative">
+    <div className="space-y-4 w-full max-w-lg mx-auto relative animate-reveal">
       {/* Decorative Sparkles */}
       <motion.div 
         animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
@@ -39,17 +42,13 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
       >
         <Sparkles className="w-10 h-10 fill-current" />
       </motion.div>
-      <motion.div 
-        animate={{ scale: [1, 1.1, 1], rotate: [0, -10, 0] }}
-        transition={{ duration: 4, repeat: Infinity, delay: 0.5 }}
-        className="absolute -bottom-4 -left-8 text-[#EE9BB6] hidden md:block"
-      >
-        <Sparkles className="w-8 h-8 fill-current opacity-60" />
-      </motion.div>
 
       <p className="text-base font-bold text-muted-foreground uppercase tracking-[0.2em] text-center md:text-left">Try this spot today</p>
       <motion.div
         whileHover={{ y: -12, scale: 1.04 }}
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.6 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
         onClick={() => setLocation(`/spots/${featuredSpot.id}`)}
@@ -75,12 +74,10 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
                 </div>
               </div>
             </div>
-            {featuredSpot.avgRating && (
-              <div className="flex items-center gap-1 text-lg font-bold text-[#EE9BB6]">
-                <Star className="w-5 h-5 fill-current" />
-                {Number(featuredSpot.avgRating).toFixed(1)}
-              </div>
-            )}
+            <div className="flex items-center gap-1 text-lg font-bold text-[#EE9BB6]">
+              <Star className="w-5 h-5 fill-current" />
+              {stats.reviewCount > 0 ? stats.avgRating.toFixed(1) : "New"}
+            </div>
           </div>
 
           <AnimatePresence>
@@ -139,6 +136,11 @@ export default function Home() {
 
   return (
     <div className="min-h-[calc(100vh-5rem)] flex flex-col relative overflow-hidden">
+      <SEO 
+        title="Find your perfect focus space" 
+        description="The curated directory of study-friendly cafés and spaces in Vienna. Find WiFi, power outlets, and Sunday-safe spots." 
+        path="/"
+      />
       {/* Decorative Background Elements */}
       <div className="absolute top-[10%] left-[-5%] w-64 h-64 bg-[#EE9BB6]/10 blur-[100px] rounded-full -z-10" />
       <div className="absolute bottom-[20%] right-[-5%] w-96 h-96 bg-primary/10 blur-[120px] rounded-full -z-10" />
@@ -211,7 +213,7 @@ export default function Home() {
               <div className="text-base text-muted-foreground font-bold tracking-tight">Curated Spots</div>
             </div>
             <div>
-              <div className="text-4xl font-serif font-bold text-foreground text-[#EE9BB6]">4.8</div>
+              <div className="text-4xl font-serif font-bold text-[#EE9BB6]">4.8</div>
               <div className="text-base text-muted-foreground font-bold tracking-tight">Average Rating</div>
             </div>
           </div>

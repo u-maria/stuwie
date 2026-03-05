@@ -1,9 +1,15 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { SEO } from "@/components/SEO";
 
 export default function About() {
   return (
     <div className="min-h-screen bg-background py-16 px-4 sm:px-6">
+      <SEO 
+        title="About STUWIE" 
+        description="Learn more about Maria's journey to build STUWIE — Vienna's curated study spot directory." 
+        path="/about"
+      />
       <div className="max-w-[700px] mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

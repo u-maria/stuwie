@@ -10,23 +10,11 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { getSpotStats, DEMO_REVIEWS } from "@/lib/reviews-data";
+import { SEO } from "@/components/SEO";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
-
-const DUMMY_REVIEWS: Record<string, any[]> = {
-  "das café": [
-    { id: -1, rating: 5, text: "Best place for long study sessions. The tables are huge and the vibe is very productive.", createdAt: new Date(2026, 1, 15).toISOString(), user: { firstName: "Lukas" } },
-    { id: -2, rating: 4, text: "Good coffee and reliable WiFi. Can get a bit loud during lunch hours though.", createdAt: new Date(2026, 1, 20).toISOString(), user: { firstName: "Sarah" } }
-  ],
-  "Jonas Reindl (Währinger Straße)": [
-    { id: -3, rating: 5, text: "Specialty coffee is amazing here. Perfect for getting some focused work done near the university.", createdAt: new Date(2026, 1, 10).toISOString(), user: { firstName: "Max" } },
-    { id: -4, rating: 4, text: "Super popular among students. Get there early to secure a spot with an outlet!", createdAt: new Date(2026, 1, 25).toISOString(), user: { firstName: "Emma" } }
-  ],
-  "J. Hornig Kaffeebar": [
-    { id: -5, rating: 5, text: "Clean, modern, and very laptop-friendly. One of my favorite spots in the 7th.", createdAt: new Date(2026, 2, 1).toISOString(), user: { firstName: "Anna" } }
-  ]
-};
 
 export default function SpotDetail() {
   const [, params] = useRoute("/spots/:id");
@@ -48,9 +36,11 @@ export default function SpotDetail() {
 
   const reviews = useMemo(() => {
     if (!spot) return [];
-    const dummy = DUMMY_REVIEWS[spot.name] || [];
-    return [...(realReviews || []), ...dummy].sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+    const dummy = DEMO_REVIEWS.filter(r => r.spotId === spot.id);
+    return [...(realReviews || []), ...dummy].sort((a, b) => new Date(b.date || b.createdAt!).getTime() - new Date(a.date || a.createdAt!).getTime());
   }, [spot, realReviews]);
+
+  const stats = useMemo(() => getSpotStats(spotId, realReviews), [spotId, realReviews]);
 
   if (spotLoading) return <div className="min-h-screen bg-background animate-pulse" />;
   if (!spot) return <div className="min-h-screen bg-background flex items-center justify-center font-serif text-2xl">Spot not found</div>;
@@ -88,8 +78,37 @@ export default function SpotDetail() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <SEO 
+        title={`${spot.name} — Study Spot in ${spot.district}`} 
+        description={`${spot.name} at ${spot.address}. ${spot.description.slice(0, 150)}...`} 
+        path={`/spots/${spot.id}`}
+      />
+      
+      {/* JSON-LD for LocalBusiness */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": spot.tags?.includes("Library") ? "Library" : "CafeOrCoffeeShop",
+          "name": spot.name,
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": spot.address,
+            "addressLocality": "Vienna",
+            "addressRegion": "Vienna",
+            "addressCountry": "AT"
+          },
+          ...(stats.reviewCount > 0 && {
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": stats.avgRating,
+              "reviewCount": stats.reviewCount
+            }
+          })
+        })}
+      </script>
+
       {/* Hero Section */}
-      <div className="relative h-[40vh] md:h-[50vh] w-full">
+      <div className="relative h-[40vh] md:h-[50vh] w-full animate-reveal">
         <img src={imageUrl} alt={spot.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/40" />
         
@@ -105,8 +124,8 @@ export default function SpotDetail() {
           <div className="flex flex-wrap items-center gap-6 text-white/95 text-lg font-medium">
             <div className="flex items-center gap-2">
               <Star className="w-6 h-6 fill-[#EE9BB6] text-[#EE9BB6]" />
-              <span className="font-bold">{Number(spot.avgRating || 0).toFixed(1)}</span>
-              <span className="opacity-80">({reviews.length} reviews)</span>
+              <span className="font-bold">{stats.reviewCount > 0 ? stats.avgRating.toFixed(1) : "New"}</span>
+              {stats.reviewCount > 0 && <span className="opacity-80">({stats.reviewCount} reviews)</span>}
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
@@ -119,7 +138,7 @@ export default function SpotDetail() {
       <div className="max-w-6xl mx-auto px-6 sm:px-8 py-12 md:py-16 flex flex-col md:flex-row gap-16">
         {/* Main Content */}
         <div className="flex-1 space-y-12">
-          <section>
+          <section className="animate-reveal" style={{ animationDelay: "0.1s" }}>
             <h2 className="text-3xl font-serif font-bold mb-6">About</h2>
             <p className="text-xl text-muted-foreground leading-relaxed whitespace-pre-line">{spot.description}</p>
             <div className="flex flex-wrap gap-2 mt-8">
@@ -131,7 +150,7 @@ export default function SpotDetail() {
             </div>
           </section>
 
-          <section>
+          <section className="animate-reveal" style={{ animationDelay: "0.2s" }}>
             <h2 className="text-3xl font-serif font-bold mb-8">Amenities</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {spot.hasWifi && (
@@ -155,7 +174,7 @@ export default function SpotDetail() {
             </div>
           </section>
 
-          <section>
+          <section className="animate-reveal" style={{ animationDelay: "0.3s" }}>
             <h2 className="text-3xl font-serif font-bold mb-8 flex items-center gap-3">
               <MessageSquare className="w-8 h-8 text-[#EE9BB6]" /> 
               Reviews
@@ -187,24 +206,24 @@ export default function SpotDetail() {
             <div className="space-y-8">
               {reviews.length === 0 ? (
                 <p className="text-xl text-muted-foreground italic">No reviews yet. Be the first!</p>
-              ) : reviews.map((review) => (
+              ) : reviews.map((review: any) => (
                 <div key={review.id} className="border-b border-border/40 pb-10 last:border-0">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-[#EE9BB6]/20 rounded-2xl flex items-center justify-center font-black text-[#EE9BB6] text-xl">
-                        {review.user?.firstName?.[0] || review.user?.email?.[0] || 'U'}
+                        {review.user?.firstName?.[0] || review.firstName?.[0] || review.user?.email?.[0] || 'U'}
                       </div>
                       <div>
-                        <div className="font-black text-lg">{review.user?.firstName || 'Anonymous User'}</div>
+                        <div className="font-black text-lg">{review.user?.firstName || review.firstName || 'Anonymous User'}</div>
                         <div className="flex gap-1 mt-1">
                           {[...Array(5)].map((_, i) => (
-                            <Star key={i} className={`w-4 h-4 ${i < review.rating ? "fill-[#EE9BB6] text-[#EE9BB6]" : "text-muted"}`} />
+                            <Star key={i} className={`w-4 h-4 ${i < (review.rating || 0) ? "fill-[#EE9BB6] text-[#EE9BB6]" : "text-muted"}`} />
                           ))}
                         </div>
                       </div>
                     </div>
                     <div className="text-sm text-muted-foreground font-bold">
-                      {new Date(review.createdAt!).toLocaleDateString()}
+                      {new Date(review.date || review.createdAt!).toLocaleDateString()}
                     </div>
                   </div>
                   <p className="text-foreground/90 text-lg leading-relaxed mt-4">{review.text}</p>
@@ -215,7 +234,7 @@ export default function SpotDetail() {
         </div>
 
         {/* Sidebar Actions */}
-        <div className="md:w-96 space-y-8">
+        <div className="md:w-96 space-y-8 animate-reveal" style={{ animationDelay: "0.4s" }}>
           <div className="bg-card p-8 rounded-[32px] shadow-2xl border border-border/50 sticky top-28">
             <h3 className="font-serif font-bold text-2xl mb-8">Quick Actions</h3>
             

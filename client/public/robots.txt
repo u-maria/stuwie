@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://stuwie.wien/sitemap.xml
