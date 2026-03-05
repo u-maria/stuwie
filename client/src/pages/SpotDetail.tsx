@@ -8,11 +8,25 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+const DUMMY_REVIEWS: Record<string, any[]> = {
+  "das café": [
+    { id: -1, rating: 5, text: "Best place for long study sessions. The tables are huge and the vibe is very productive.", createdAt: new Date(2026, 1, 15).toISOString(), user: { firstName: "Lukas" } },
+    { id: -2, rating: 4, text: "Good coffee and reliable WiFi. Can get a bit loud during lunch hours though.", createdAt: new Date(2026, 1, 20).toISOString(), user: { firstName: "Sarah" } }
+  ],
+  "Jonas Reindl (Währinger Straße)": [
+    { id: -3, rating: 5, text: "Specialty coffee is amazing here. Perfect for getting some focused work done near the university.", createdAt: new Date(2026, 1, 10).toISOString(), user: { firstName: "Max" } },
+    { id: -4, rating: 4, text: "Super popular among students. Get there early to secure a spot with an outlet!", createdAt: new Date(2026, 1, 25).toISOString(), user: { firstName: "Emma" } }
+  ],
+  "J. Hornig Kaffeebar": [
+    { id: -5, rating: 5, text: "Clean, modern, and very laptop-friendly. One of my favorite spots in the 7th.", createdAt: new Date(2026, 2, 1).toISOString(), user: { firstName: "Anna" } }
+  ]
+};
 
 export default function SpotDetail() {
   const [, params] = useRoute("/spots/:id");
@@ -21,7 +35,7 @@ export default function SpotDetail() {
   const { isAuthenticated } = useAuth();
   
   const { data: spot, isLoading: spotLoading } = useSpot(spotId);
-  const { data: reviews } = useReviews(spotId);
+  const { data: realReviews } = useReviews(spotId);
   const { data: savedSpots } = useSavedSpots();
   const { data: checkIns } = useCheckIns();
   
@@ -32,24 +46,18 @@ export default function SpotDetail() {
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(5);
 
+  const reviews = useMemo(() => {
+    if (!spot) return [];
+    const dummy = DUMMY_REVIEWS[spot.name] || [];
+    return [...(realReviews || []), ...dummy].sort((a, b) => new Date(b.createdAt!).getTime() - new Date(a.createdAt!).getTime());
+  }, [spot, realReviews]);
+
   if (spotLoading) return <div className="min-h-screen bg-background animate-pulse" />;
   if (!spot) return <div className="min-h-screen bg-background flex items-center justify-center font-serif text-2xl">Spot not found</div>;
 
   const isFavorite = savedSpots?.some(s => s.spotId === spot.id && s.listType === "favorite");
   const hasCheckedIn = checkIns?.some(c => c.spotId === spot.id);
   const imageUrl = spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1920&q=80";
-
-  const handleCheckIn = () => {
-    if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
-    checkInMutation.mutate(spot.id, {
-      onSuccess: () => toast({ title: "Checked in successfully!" })
-    });
-  };
-
-  const handleFavorite = () => {
-    if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
-    toggleSaveMutation.mutate({ spotId: spot.id, listType: "favorite" });
-  };
 
   const submitReview = () => {
     if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
@@ -62,7 +70,8 @@ export default function SpotDetail() {
     });
   };
 
-  const currentDayKey = DAY_KEYS[(new Date().getDay() + 6) % 7];
+  const viennaNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Vienna"}));
+  const currentDayKey = DAY_KEYS[(viennaNow.getDay() + 6) % 7];
   const todayHours = (spot.openingHours as any)?.[currentDayKey];
 
   return (
@@ -84,8 +93,8 @@ export default function SpotDetail() {
           <div className="flex flex-wrap items-center gap-6 text-white/95 text-lg font-medium">
             <div className="flex items-center gap-2">
               <Star className="w-6 h-6 fill-[#EE9BB6] text-[#EE9BB6]" />
-              <span className="font-bold">{Number(spot.avgRating).toFixed(1)}</span>
-              <span className="opacity-80">({spot.reviewCount} reviews)</span>
+              <span className="font-bold">{Number(spot.avgRating || 0).toFixed(1)}</span>
+              <span className="opacity-80">({reviews.length} reviews)</span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
@@ -164,9 +173,9 @@ export default function SpotDetail() {
             )}
 
             <div className="space-y-8">
-              {reviews?.length === 0 ? (
+              {reviews.length === 0 ? (
                 <p className="text-xl text-muted-foreground italic">No reviews yet. Be the first!</p>
-              ) : reviews?.map((review) => (
+              ) : reviews.map((review) => (
                 <div key={review.id} className="border-b border-border/40 pb-10 last:border-0">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">

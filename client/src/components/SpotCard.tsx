@@ -37,27 +37,16 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
     if (!spot.openingHours) return null;
     const hours = spot.openingHours as any;
     
-    // Check if Mon-Sun are same
-    const allSame = DAYS.every(d => JSON.stringify(hours[d]) === JSON.stringify(hours['mon']));
-    if (allSame) {
-      const h = hours['mon'];
-      return h.closed ? "Mon–Sun closed" : `Mon–Sun ${h.open}–${h.close}`;
-    }
+    // Vienna time handling
+    const viennaNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Vienna"}));
+    const currentDay = viennaNow.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const dayMap = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const todayKey = dayMap[currentDay];
+    const todayHours = hours[todayKey];
 
-    // Mon-Fri same
-    const weekSame = ['tue', 'wed', 'thu', 'fri'].every(d => JSON.stringify(hours[d]) === JSON.stringify(hours['mon']));
-    // Sat-Sun same
-    const weekendSame = JSON.stringify(hours['sat']) === JSON.stringify(hours['sun']);
-
-    if (weekSame && weekendSame) {
-      const hw = hours['mon'];
-      const hwe = hours['sat'];
-      return `Mon–Fri ${hw.open}–${hw.close}, Sat–Sun ${hwe.open}–${hwe.close}`;
-    }
-
-    // fallback simplified display
-    const h = hours[DAYS[new Date().getDay()]];
-    return h?.closed ? "Closed today" : `Open today: ${h?.open}–${h?.close}`;
+    if (todayHours?.closed) return "Closed today";
+    if (todayHours?.open && todayHours?.close) return `Open today: ${todayHours.open}–${todayHours.close}`;
+    return "Closed today";
   };
 
   return (

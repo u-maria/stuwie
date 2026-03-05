@@ -70,7 +70,7 @@ export function Navigation() {
                   <Link href="/signup">Sign Up</Link>
                 </Button>
                 <Button asChild className="rounded-full shadow-lg shadow-primary/20 hover:shadow-xl hover:-translate-y-0.5 transition-all font-bold px-6">
-                  <Link href="/signup">
+                  <Link href="/signin">
                     Sign In
                   </Link>
                 </Button>

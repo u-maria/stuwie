@@ -1,0 +1,65 @@
+Make the following updates across the website in ONE pass (optimize for minimal token output). Scope: UI alignment + data display correctness + auth routing + search normalization + small content tweaks. Do NOT change database schema. Do NOT remove existing content. Keep styling consistent with the current beige/brown theme.
+
+1) HOME PAGE — Hero “Try this spot today” card alignment
+- The featured/suggested café card on the right side of the hero is visually too low.
+- Adjust the hero layout so the right card sits at approximately the same vertical level as the main hero headline (“Find your perfect focus space.”).
+- On desktop: the top of the card should align roughly with the top of the hero text block (or slightly below the badge), not near the bottom.
+- On mobile: ensure the card stacks naturally with good spacing (no awkward huge gap).
+- Do this by fixing the hero container alignment (e.g., grid/flex alignment, padding, margin, translateY) rather than hardcoding absolute positions. Keep it responsive.
+
+2) /BROWSE — Fix “Open today” display
+- Some spots are not showing “Open today” correctly.
+- Identify the bug in the logic that decides today’s opening hours (likely day-of-week mapping, locale/timezone, or missing fallback).
+- Requirements:
+  - Use Vienna local time.
+  - Correctly map Mon–Sun to the correct field.
+  - If hours for today are missing/closed, display “Closed today”.
+  - If hours exist, show “Open today: HH:MM–HH:MM”.
+- Add quick unit-ish checks or console assertions (dev-only) to verify at least 3 spots render correct “Open today” output for different weekdays.
+
+3) Reviews — Add dummy review(s) to a few spots
+- Add a small set of hardcoded dummy reviews (no DB schema changes).
+- Add 1–3 short reviews to at least 3 existing spots (choose ones already in the list, e.g. das café, Jonas Reindl, J. Hornig, etc.).
+- Display them on the spot detail page (and/or wherever reviews are shown) in a neat “Reviews” section:
+  - reviewer name (first name only), rating (e.g., 4.5), date (approx), and 1–2 sentence text.
+- If there’s already a reviews UI, just make sure something actually shows up.
+
+4) LEGAL NOTICE — Coherent personal info styling + shorter honest disclaimer
+- In the legal notice page, make all my personal info (name/address/contact) visually coherent:
+  - same font family, size, color, weight, line-height; remove any mismatched inline styles.
+- Replace the long disclaimer text:
+  Replace:
+  “This website is a demonstration project created for educational and portfolio purposes to showcase the author’s approach to web development and digital business thinking. It is not an active service. Any information shown is illustrative and may be incomplete or outdated.”
+  With something shorter, generic, honest, and not mentioning “digital business”, e.g.:
+  “This is a demo project for learning and portfolio purposes. It’s not an active service. Information shown may be incomplete or outdated.”
+- Keep tone simple and consistent with the rest of the site.
+
+5) AUTH — Sign In should go to its own page (with same social logins as Sign Up)
+- Currently Sign In routes incorrectly / crashes and is pointed to Sign Up.
+- Create a dedicated /signin page.
+- It must have the same social media login buttons/options as the Sign Up page (copy the UI and handlers), plus email/password form if present.
+- Update navbar “Sign In” button to route to /signin.
+- Ensure all auth buttons have valid destinations and no crashes. If auth is placeholder/dummy, keep it stable and show friendly “demo” messaging rather than breaking.
+
+6) SEARCH — Fix “cafe” vs “café” mismatch
+- Searching for “cafe” should match items with “café”, and vice versa.
+- Implement accent/diacritic-insensitive search normalization:
+  - normalize both query and searchable fields by lowercasing + Unicode normalization (NFD) + stripping diacritics.
+  - also trim whitespace.
+- Apply this to the Browse page search and any filtering/search functionality where this issue exists.
+
+7) ABOUT — Improve contact button text + presentation
+- On the About page, replace the ugly “Here is the contact form: link” button/label.
+- Make it a proper CTA like:
+  - Button text: “Contact me” or “Send feedback”
+  - Secondary small text: “Found a great study spot? Tell me.”
+- If it’s an external link, label it clearly and open in a new tab. If it’s internal, route to a simple /contact page (basic form can be static/dummy; no DB changes required).
+
+8) QA PASS — Verify UX + routing
+- After implementing: click-test (programmatically or manually described) every navbar link + major CTA:
+  Home, Browse, Map, About, Sign Up, Sign In, spot cards, search, filters, contact CTA.
+- Ensure no button is dead. If something is placeholder, it should still respond (toast/message) rather than doing nothing or crashing.
+
+Deliverable:
+- Provide only the code changes needed (no essays).
+- Keep styling consistent with current theme and components.

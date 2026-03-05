@@ -69,14 +69,24 @@ export default function SpotsPage() {
   const filteredSpots = useMemo(() => {
     if (!spots) return [];
     
-    const now = new Date();
-    const day = DAYS[now.getDay()];
-    const currentTime = now.getHours() * 60 + now.getMinutes();
+    const viennaNow = new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Vienna"}));
+    const day = DAYS[viennaNow.getDay()];
+    const currentTime = viennaNow.getHours() * 60 + viennaNow.getMinutes();
+
+    const normalize = (str: string) => 
+      str.toLowerCase().trim().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
     return spots.filter(spot => {
       if (debouncedSearch) {
-        const searchStr = `${spot.name} ${spot.address} ${spot.district} ${spot.description} ${spot.tags?.join(" ")}`.toLowerCase();
-        if (!searchStr.includes(debouncedSearch.toLowerCase())) return false;
+        const query = normalize(debouncedSearch);
+        const searchableFields = [
+          spot.name,
+          spot.address,
+          spot.district,
+          spot.description,
+          ...(spot.tags || [])
+        ].join(" ");
+        if (!normalize(searchableFields).includes(query)) return false;
       }
 
       if (appliedFilters.tags.length > 0) {

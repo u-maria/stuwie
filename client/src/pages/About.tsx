@@ -42,12 +42,13 @@ export default function About() {
               Any suggestions on improving the website and overall experience are always welcome!
             </p>
             
-            <div className="pt-8">
-              <Button asChild variant="default" className="rounded-xl h-12 px-8 shadow-lg shadow-[#EE9BB6]/20 hover:shadow-xl transition-all bg-primary hover:bg-primary/90 font-bold">
-                <a href="#" onClick={(e) => e.preventDefault()}>
-                  Here is the contact form: link
+            <div className="pt-12 space-y-4">
+              <Button asChild variant="default" className="rounded-2xl h-16 px-10 shadow-xl shadow-[#EE9BB6]/20 hover:shadow-2xl transition-all bg-primary hover:bg-primary/90 font-black text-xl">
+                <a href="mailto:contact@stuwie.example" target="_blank">
+                  Contact me
                 </a>
               </Button>
+              <p className="text-sm font-bold text-muted-foreground ml-2">Found a great study spot? Tell me.</p>
             </div>
           </div>
         </motion.div>

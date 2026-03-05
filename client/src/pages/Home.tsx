@@ -143,13 +143,13 @@ export default function Home() {
       <div className="absolute top-[10%] left-[-5%] w-64 h-64 bg-[#EE9BB6]/10 blur-[100px] rounded-full -z-10" />
       <div className="absolute bottom-[20%] right-[-5%] w-96 h-96 bg-primary/10 blur-[120px] rounded-full -z-10" />
 
-      <main className="flex-1 flex flex-col md:flex-row items-center justify-center p-8 md:p-16 max-w-screen-2xl mx-auto w-full gap-16 lg:gap-32">
+      <main className="flex-1 flex flex-col md:flex-row items-start justify-center p-8 md:p-16 max-w-screen-2xl mx-auto w-full gap-16 lg:gap-32 pt-12 md:pt-24">
         
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
-          className="flex-1 max-w-3xl space-y-10"
+          className="flex-1 max-w-3xl space-y-10 md:mt-12"
         >
           <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-sm font-black uppercase tracking-widest mb-2">
             <Coffee className="w-5 h-5" />

@@ -17,6 +17,7 @@ import SubmitSpot from "@/pages/SubmitSpot";
 import AdminDashboard from "@/pages/AdminDashboard";
 import About from "@/pages/About";
 import Signup from "@/pages/Signup";
+import Signin from "@/pages/Signin";
 import Privacy from "@/pages/Privacy";
 import Legal from "@/pages/Legal";
 
@@ -32,6 +33,7 @@ function Router() {
       <Route path="/admin/pending" component={AdminDashboard} />
       <Route path="/about" component={About} />
       <Route path="/signup" component={Signup} />
+      <Route path="/signin" component={Signin} />
       <Route path="/privacy" component={Privacy} />
       <Route path="/legal" component={Legal} />
       <Route component={NotFound} />
