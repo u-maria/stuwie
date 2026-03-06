@@ -1,0 +1,48 @@
+Make a very small corrective pass only. Do NOT redesign anything. Do NOT touch layout structure, SEO, routing, or mobile nav. Most of the site is already good. Fix only these final UI inconsistencies:
+
+1) BROWSE CARDS — EMPTY SPACE / CONSISTENCY
+Browse cards currently have inconsistent empty space when some spots have fewer/shorter tags.
+- Keep all cards the same overall height.
+- Reduce the awkward blank area above the tags section.
+- Make card content feel more balanced and coherent even when tag count differs.
+- Do NOT make card heights uneven.
+- Tighten vertical spacing so the cards look consistent across the grid.
+
+2) SIGN IN BUTTON TEXT SIZE
+The text inside the Sign In button is visibly too small compared to the rest of the UI.
+- Increase the Sign In button text size slightly so it matches the visual scale of the site.
+- Keep the button shape/style the same.
+
+3) MAP POPUP — REMOVE BLUE TEXT COMPLETELY
+This is important:
+- On map popup cards, the “View Details” button still shows blue text and/or blue border.
+- Remove ALL blue text from this button.
+- Remove ALL blue border/accent from this button.
+- The button text should be white for clear contrast.
+- The button should match the site palette and be fully readable.
+Repeat: no blue text, no blue border, no blue accent on the map popup button.
+
+4) LETTER SPACING / TRACKING ON UPPERCASE LABELS
+Some uppercase labels/headings now look inconsistent because letter spacing is too wide.
+Examples include labels like:
+- “VIENNA’S BEST STUDY SPOTS”
+- “TRY THIS SPOT TODAY”
+- similar uppercase UI labels
+Fix:
+- reduce letter spacing/tracking slightly
+- keep the clean style, but make it feel more natural and less stretched
+- do not change the font family again, just refine spacing
+
+SAFETY:
+- Do NOT do another broad typography rewrite
+- Do NOT change desktop header layout
+- Do NOT change mobile structure
+- Do NOT touch components that are already working well
+
+Before finishing, verify:
+- browse cards still have equal height, but less awkward empty space
+- Sign In button text is larger and visually balanced
+- map popup “View Details” has white text and no blue border/text at all
+- uppercase labels have tighter, cleaner letter spacing
+
+Output only the minimal code/file changes needed.

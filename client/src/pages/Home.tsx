@@ -43,7 +43,7 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
         <Sparkles className="w-8 h-8 fill-current" />
       </motion.div>
 
-      <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left font-sans">Try this spot today</p>
+      <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-wider text-center md:text-left font-sans">Try this spot today</p>
       <motion.div
         whileHover={prefersReducedMotion ? {} : { y: -8, scale: 1.02 }}
         initial={{ opacity: 0, scale: 0.98 }}
@@ -122,7 +122,7 @@ export default function Home() {
       <main className="flex-1 flex flex-col md:flex-row items-center md:items-start justify-center p-6 md:p-16 max-w-screen-2xl mx-auto w-full gap-8 md:gap-16 lg:gap-24 md:pt-20">
         
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 max-w-3xl space-y-6 md:space-y-8 md:mt-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-[10px] md:text-xs font-bold uppercase tracking-widest font-sans">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-[10px] md:text-xs font-bold uppercase tracking-wider font-sans">
             <Coffee className="w-3.5 h-3.5" />
             <span>Vienna's Best Study Spots</span>
           </div>

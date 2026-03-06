@@ -54,7 +54,7 @@ export function Navigation() {
                 <Button asChild variant="ghost" className="hidden md:flex rounded-full font-medium text-muted-foreground hover:text-foreground">
                   <Link href="/signup">Sign Up</Link>
                 </Button>
-                <Button asChild size="sm" className="rounded-full shadow-lg shadow-primary/10 hover:shadow-xl transition-all font-bold px-4 md:px-6 h-9 md:h-11">
+                <Button asChild size="sm" className="rounded-full shadow-lg shadow-primary/10 hover:shadow-xl transition-all font-bold px-4 md:px-6 h-9 md:h-11 text-sm md:text-base">
                   <Link href="/signin">Sign In</Link>
                 </Button>
               </>

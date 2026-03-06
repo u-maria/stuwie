@@ -78,8 +78,8 @@ export default function MapPage() {
                 </div>
                 <div className="p-4">
                   <h3 className="font-bold text-base leading-tight mb-1 text-foreground font-sans">{spot.name}</h3>
-                  <p className="text-[10px] text-muted-foreground mb-3 font-medium uppercase tracking-widest font-sans">{spot.district}</p>
-                  <Button asChild size="sm" className="w-full h-8 text-[10px] font-bold rounded-lg shadow-sm text-white font-sans">
+                  <p className="text-[10px] text-muted-foreground mb-3 font-medium uppercase tracking-wider font-sans">{spot.district}</p>
+                  <Button asChild size="sm" className="w-full h-8 text-[10px] font-bold rounded-lg shadow-sm bg-primary hover:bg-primary/90 text-white border-0 font-sans">
                     <Link href={`/spots/${spot.id}`}>View Details</Link>
                   </Button>
                 </div>
@@ -91,7 +91,7 @@ export default function MapPage() {
 
       <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2">
         <div className="bg-background/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg border border-border/50">
-          <h2 className="font-bold text-xs uppercase tracking-widest text-primary font-sans">Vienna Map</h2>
+          <h2 className="font-bold text-xs uppercase tracking-wider text-primary font-sans">Vienna Map</h2>
           <p className="text-[10px] text-muted-foreground font-bold font-sans">{filteredSpots.length} spots found</p>
         </div>
         <Sheet>
