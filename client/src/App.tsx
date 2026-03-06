@@ -7,7 +7,6 @@ import { Navigation } from "@/components/Navigation";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { Footer } from "@/components/Footer";
 import NotFound from "@/pages/not-found";
-import { HelmetProvider } from "react-helmet-async";
 
 import Home from "@/pages/Home";
 import MapPage from "@/pages/MapPage";
@@ -45,19 +44,17 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        <TooltipProvider>
-          <div className="min-h-screen bg-background font-sans text-foreground flex flex-col">
-            <AnnouncementBar />
-            <Navigation />
-            <div className="flex-1">
-              <Router />
-            </div>
-            <Footer />
+      <TooltipProvider>
+        <div className="min-h-screen bg-background font-sans text-foreground flex flex-col">
+          <AnnouncementBar />
+          <Navigation />
+          <div className="flex-1">
+            <Router />
           </div>
-          <Toaster />
-        </TooltipProvider>
-      </HelmetProvider>
+          <Footer />
+        </div>
+        <Toaster />
+      </TooltipProvider>
     </QueryClientProvider>
   );
 }
