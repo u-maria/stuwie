@@ -2,7 +2,7 @@ import { useRoute, useLocation } from "wouter";
 import { MapPin, Wifi, Plug, Star, Clock, Globe, ArrowLeft, Heart, CheckCircle2, MessageSquare, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { useSpot, useSpots } from "@/hooks/use-spots";
-import { useReviews, useCreateReview } from "@/hooks/use-reviews";
+import { useReviews } from "@/hooks/use-reviews";
 import { useCreateCheckIn, useToggleSavedSpot, useSavedSpots, useCheckIns } from "@/hooks/use-user-activity";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -34,6 +34,7 @@ export default function SpotDetail() {
   const toggleSaveMutation = useToggleSavedSpot();
 
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [selectedRating, setSelectedRating] = useState(0);
 
   const spots = useMemo(() => {
     if (!rawSpots) return [];
@@ -53,7 +54,7 @@ export default function SpotDetail() {
   const stats = useMemo(() => getSpotStats(spotId, realReviews), [spotId, realReviews]);
 
   if (spotLoading) return <div className="min-h-screen bg-background animate-pulse" />;
-  if (!spot) return <div className="min-h-screen bg-background flex items-center justify-center font-serif text-2xl">Spot not found</div>;
+  if (!spot) return <div className="min-h-screen bg-background flex items-center justify-center font-sans text-2xl">Spot not found</div>;
 
   const isFavorite = savedSpots?.some(s => s.spotId === spot.id && s.listType === "favorite");
   const hasCheckedIn = checkIns?.some(c => c.spotId === spot.id);
@@ -81,12 +82,11 @@ export default function SpotDetail() {
         <div className="absolute inset-0 bg-black/30" />
         
         <div className="absolute top-6 left-6 z-10">
-          <Button asChild variant="secondary" size="sm" className="rounded-full bg-white/20 backdrop-blur hover:bg-white border-0 text-white hover:text-black h-10 px-4">
+          <Button asChild variant="secondary" size="sm" className="rounded-full bg-white/20 backdrop-blur hover:bg-white border-0 text-white hover:text-black h-10 px-4 font-sans">
             <Link href="/spots"><ArrowLeft className="w-4 h-4 mr-2" /> Back to Browse</Link>
           </Button>
         </div>
 
-        {/* Prev/Next Navigation */}
         <div className="absolute inset-y-0 left-4 md:left-8 flex items-center">
           <Button 
             disabled={!prevSpot} 
@@ -107,9 +107,9 @@ export default function SpotDetail() {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0 p-6 md:p-12 max-w-7xl mx-auto w-full">
-          <Badge className="bg-[#EE9BB6] text-white mb-3 md:mb-4 px-3 py-0.5 text-xs font-bold tracking-wider">{spot.district}</Badge>
-          <h1 className="text-3xl md:text-6xl font-bold text-white mb-3 md:mb-4">{spot.name}</h1>
-          <div className="flex flex-wrap items-center gap-4 md:gap-6 text-white/95 text-sm md:text-lg font-medium">
+          <Badge className="bg-[#EE9BB6] text-white mb-3 md:mb-4 px-3 py-0.5 text-xs font-bold tracking-wider font-sans">{spot.district}</Badge>
+          <h1 className="text-3xl md:text-6xl font-bold text-white mb-3 md:mb-4 font-sans">{spot.name}</h1>
+          <div className="flex flex-wrap items-center gap-4 md:gap-6 text-white/95 text-sm md:text-lg font-medium font-sans">
             <div className="flex items-center gap-2">
               <Star className="w-4 h-4 md:w-6 md:h-6 fill-[#EE9BB6] text-[#EE9BB6]" />
               <span className="font-bold">{stats.reviewCount > 0 ? stats.avgRating.toFixed(1) : "New"}</span>
@@ -126,11 +126,11 @@ export default function SpotDetail() {
       <div className="max-w-7xl mx-auto px-6 py-12 md:py-16 flex flex-col md:flex-row gap-12 md:gap-20">
         <div className="flex-1 space-y-12">
           <section className="animate-reveal">
-            <h2 className="text-2xl md:text-3xl font-bold mb-6">About</h2>
-            <p className="text-base md:text-lg text-muted-foreground leading-relaxed whitespace-pre-line">{spot.description}</p>
+            <h2 className="text-2xl md:text-3xl font-bold mb-6 font-sans">About</h2>
+            <p className="text-base md:text-lg text-muted-foreground leading-relaxed whitespace-pre-line font-sans">{spot.description}</p>
             <div className="flex flex-wrap gap-2 mt-8">
                {spot.tags && (spot.tags as string[]).map((tag, i) => (
-                <Badge key={i} variant="secondary" className="bg-secondary/70 text-secondary-foreground font-medium px-3 py-1 rounded-lg text-sm">
+                <Badge key={i} variant="secondary" className="bg-secondary/70 text-secondary-foreground font-medium px-3 py-1 rounded-lg text-sm font-sans">
                   {tag}
                 </Badge>
               ))}
@@ -138,33 +138,39 @@ export default function SpotDetail() {
           </section>
 
           <section className="animate-reveal">
-            <h2 className="text-2xl md:text-3xl font-bold mb-8">Amenities</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-8 font-sans">Amenities</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {spot.hasWifi && <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-2xl"><Wifi className="w-5 h-5 text-[#EE9BB6]" /><span className="font-medium">Fast WiFi</span></div>}
-              {spot.hasOutlets && <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-2xl"><Plug className="w-5 h-5 text-[#EE9BB6]" /><span className="font-medium">Power Outlets</span></div>}
-              {spot.sundayOpen && <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-2xl"><Clock className="w-5 h-5 text-[#EE9BB6]" /><span className="font-medium">Open Sundays</span></div>}
+              {spot.hasWifi && <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-2xl"><Wifi className="w-5 h-5 text-[#EE9BB6]" /><span className="font-medium font-sans">Fast WiFi</span></div>}
+              {spot.hasOutlets && <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-2xl"><Plug className="w-5 h-5 text-[#EE9BB6]" /><span className="font-medium font-sans">Power Outlets</span></div>}
+              {spot.sundayOpen && <div className="flex items-center gap-4 p-4 bg-secondary/30 rounded-2xl"><Clock className="w-5 h-5 text-[#EE9BB6]" /><span className="font-medium font-sans">Open Sundays</span></div>}
             </div>
           </section>
 
           <section className="animate-reveal">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3">
+              <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3 font-sans">
                 <MessageSquare className="w-6 h-6 md:w-8 md:h-8 text-[#EE9BB6]" /> Reviews
               </h2>
-              <Dialog open={reviewOpen} onOpenChange={setReviewOpen}>
+              <Dialog open={reviewOpen} onOpenChange={(o) => { setReviewOpen(o); if(!o) setSelectedRating(0); }}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" className="rounded-full border-2 font-bold px-6">Leave a review</Button>
+                  <Button variant="outline" className="rounded-full border-2 font-bold px-6 font-sans">Leave a review</Button>
                 </DialogTrigger>
                 <DialogContent>
-                  <DialogHeader><DialogTitle>Leave a review for {spot.name}</DialogTitle></DialogHeader>
+                  <DialogHeader><DialogTitle className="font-sans">Leave a review for {spot.name}</DialogTitle></DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="flex gap-2">
-                      {[1,2,3,4,5].map(s => <Star key={s} className="w-6 h-6 text-muted cursor-pointer" />)}
+                      {[1,2,3,4,5].map(s => (
+                        <Star 
+                          key={s} 
+                          onClick={() => setSelectedRating(s)}
+                          className={`w-6 h-6 cursor-pointer transition-colors ${selectedRating >= s ? "fill-accent text-accent" : "text-muted"}`} 
+                        />
+                      ))}
                     </div>
-                    <Textarea placeholder="Share your experience..." className="min-h-[100px] rounded-xl" />
+                    <Textarea placeholder="Share your experience..." className="min-h-[100px] rounded-xl font-sans" />
                   </div>
                   <DialogFooter>
-                    <Button className="w-full font-bold" onClick={() => toast({ title: "Demo only", description: "Please sign in or create an account to leave a review." })}>
+                    <Button className="w-full font-bold font-sans" onClick={() => toast({ title: "Demo only", description: "Please sign in or create an account to leave a review.", duration: 2500 })}>
                       Submit Review
                     </Button>
                   </DialogFooter>
@@ -174,16 +180,16 @@ export default function SpotDetail() {
 
             <div className="space-y-8">
               {reviews.length === 0 ? (
-                <p className="text-lg text-muted-foreground italic">No reviews yet. Be the first!</p>
+                <p className="text-lg text-muted-foreground italic font-sans">No reviews yet. Be the first!</p>
               ) : reviews.map((review: any) => (
-                <div key={review.id} className="border-b border-border/40 pb-8 last:border-0">
+                <div key={review.id} className="border-b border-border/40 pb-8 last:border-0 font-sans">
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-[#EE9BB6]/20 rounded-xl flex items-center justify-center font-bold text-[#EE9BB6]">
+                      <div className="w-10 h-10 bg-[#EE9BB6]/20 rounded-xl flex items-center justify-center font-bold text-[#EE9BB6] font-sans">
                         {(review.user?.firstName || review.firstName)?.[0] || 'U'}
                       </div>
                       <div>
-                        <div className="font-bold">{review.user?.firstName || review.firstName || 'Anonymous'}</div>
+                        <div className="font-bold font-sans">{review.user?.firstName || review.firstName || 'Anonymous'}</div>
                         <div className="flex gap-0.5 mt-0.5">
                           {[...Array(5)].map((_, i) => (
                             <Star key={i} className={`w-3.5 h-3.5 ${i < (review.rating || 0) ? "fill-[#EE9BB6] text-[#EE9BB6]" : "text-muted"}`} />
@@ -191,11 +197,11 @@ export default function SpotDetail() {
                         </div>
                       </div>
                     </div>
-                    <div className="text-xs text-muted-foreground font-medium">
+                    <div className="text-xs text-muted-foreground font-medium font-sans">
                       {new Date(review.date || review.createdAt!).toLocaleDateString()}
                     </div>
                   </div>
-                  <p className="text-foreground/90 leading-relaxed">{review.text}</p>
+                  <p className="text-foreground/90 leading-relaxed font-sans">{review.text}</p>
                 </div>
               ))}
             </div>
@@ -204,28 +210,28 @@ export default function SpotDetail() {
 
         <div className="md:w-80 lg:w-96 space-y-8 shrink-0">
           <div className="bg-card p-6 md:p-8 rounded-[24px] md:rounded-[32px] shadow-lg border border-border/50 sticky top-28">
-            <h3 className="text-xl font-bold mb-6">Quick Actions</h3>
-            <Button className={`w-full justify-center h-14 rounded-xl mb-3 text-lg font-bold shadow-md ${hasCheckedIn ? "bg-accent" : "bg-primary"}`} onClick={handleCheckIn} disabled={checkInMutation.isPending || hasCheckedIn}>
+            <h3 className="text-xl font-bold mb-6 font-sans">Quick Actions</h3>
+            <Button className={`w-full justify-center h-14 rounded-xl mb-3 text-lg font-bold shadow-md font-sans ${hasCheckedIn ? "bg-accent" : "bg-primary"}`} onClick={handleCheckIn} disabled={checkInMutation.isPending || hasCheckedIn}>
               <CheckCircle2 className="w-5 h-5 mr-2" /> {hasCheckedIn ? "Checked In!" : "Check-in Here"}
             </Button>
-            <Button variant="outline" className={`w-full justify-center h-14 rounded-xl mb-8 border-2 text-lg font-bold ${isFavorite ? "text-destructive border-destructive" : ""}`} onClick={handleFavorite}>
+            <Button variant="outline" className={`w-full justify-center h-14 rounded-xl mb-8 border-2 text-lg font-bold font-sans ${isFavorite ? "text-destructive border-destructive" : ""}`} onClick={handleFavorite}>
               <Heart className={`w-5 h-5 mr-2 ${isFavorite ? "fill-destructive" : ""}`} /> {isFavorite ? "In Favorites" : "Favorite Spot"}
             </Button>
 
             <div className="space-y-6 pt-6 border-t border-border/50">
-              <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground">Opening Hours</h4>
+              <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Opening Hours</h4>
               <div className="space-y-2">
                 {DAY_KEYS.map((key, i) => {
                   const h = (spot.openingHours as any)?.[key];
                   return (
-                    <div key={key} className={`flex justify-between text-sm ${key === currentDayKey ? "font-bold text-primary" : "text-muted-foreground font-medium"}`}>
+                    <div key={key} className={`flex justify-between text-sm ${key === currentDayKey ? "font-bold text-primary" : "text-muted-foreground font-medium"} font-sans`}>
                       <span>{DAYS[i]}</span>
                       <span>{h?.closed ? "Closed" : `${h?.open} – ${h?.close}`}</span>
                     </div>
                   );
                 })}
               </div>
-              <Button asChild variant="outline" className="w-full h-12 rounded-xl gap-2 border-2 font-bold text-sm hover:border-[#EE9BB6] hover:text-[#EE9BB6]">
+              <Button asChild variant="outline" className="w-full h-12 rounded-xl gap-2 border-2 font-bold text-sm hover:border-[#EE9BB6] hover:text-[#EE9BB6] font-sans">
                 <a href={(spot as any).googleMapsUrl} target="_blank" rel="noreferrer"><ExternalLink className="w-4 h-4" /> Google Maps</a>
               </Button>
             </div>

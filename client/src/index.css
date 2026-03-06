@@ -8,7 +8,7 @@
 @layer base {
   :root {
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
-    --font-serif: 'Lora', serif;
+    --font-serif: var(--font-sans);
 
     --background: 40 33% 96%;
     --foreground: 20 10% 15%;
@@ -38,7 +38,7 @@
     --input: 40 15% 85%;
     --ring: 340 68% 77%;
     
-    --radius: 1rem;
+    --radius: 0.75rem;
   }
 }
 
@@ -50,10 +50,11 @@
 
   h1, h2, h3, h4, h5, h6 {
     @apply tracking-tight font-sans;
+    font-family: var(--font-sans) !important;
   }
 
   .font-serif {
-    font-family: var(--font-serif);
+    font-family: var(--font-sans) !important;
   }
   
   a, button {
@@ -107,7 +108,7 @@
 .leaflet-popup-content-wrapper {
   border-radius: var(--radius);
   font-family: var(--font-sans);
-  @apply shadow-2xl border-none p-0 overflow-hidden;
+  @apply shadow-xl border-none p-0 overflow-hidden;
 }
 .leaflet-popup-content {
   margin: 0 !important;

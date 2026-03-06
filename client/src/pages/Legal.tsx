@@ -7,11 +7,11 @@ export default function Legal() {
       <SEO title="Legal Notice" description="Legal information for STUWIE." path="/legal" />
       <div className="max-w-2xl mx-auto space-y-12">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
-          <h1 className="text-3xl md:text-4xl font-bold">Legal Notice</h1>
+          <h1 className="text-3xl md:text-4xl font-bold font-sans">Legal Notice</h1>
           
           <div className="space-y-10">
             <section className="space-y-4">
-              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-[#EE9BB6]">Provider</p>
+              <p className="font-bold text-[10px] uppercase tracking-[0.2em] text-[#EE9BB6] font-sans">Provider</p>
               <div className="space-y-1 text-muted-foreground font-medium text-base leading-relaxed">
                 <p>Maria Umerkina</p>
                 <p>Vienna, Austria</p>

@@ -48,9 +48,9 @@ export default function MapPage() {
         const hours = (spot.openingHours as any)?.[day];
         if (!hours || hours.closed) return false;
         const [oH, oM] = hours.open.split(':').map(Number);
-        const [cH, cM] = hours.close.split(':').map(Number);
+        const [cH, cHVal] = hours.close.split(':').map(Number);
         let openVal = oH * 60 + oM;
-        let closeVal = cH * 60 + cM;
+        let closeVal = cH * 60 + cHVal;
         if (closeVal <= openVal) closeVal += 24 * 60;
         if (currentTime < openVal || currentTime >= closeVal) return false;
       }
@@ -71,15 +71,15 @@ export default function MapPage() {
               <div className="bg-card w-full">
                 <div className="h-32 w-full bg-muted relative">
                   <img src={spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80"} alt={spot.name} className="w-full h-full object-cover" />
-                  <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur text-white px-2 py-1 rounded-md flex items-center gap-1 text-[10px] font-bold">
-                    <Star className="w-3 h-3 text-[#EE9BB6] fill-[#EE9BB6]" />
+                  <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur text-white px-2 py-1 rounded-md flex items-center gap-1 text-[10px] font-bold font-sans">
+                    <Star className="w-3 h-3 text-accent fill-accent" />
                     {spot.reviewCount > 0 ? (spot.avgRating as number).toFixed(1) : "New"}
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-base leading-tight mb-1 text-foreground">{spot.name}</h3>
-                  <p className="text-[10px] text-muted-foreground mb-3 font-medium uppercase tracking-widest">{spot.district}</p>
-                  <Button asChild size="sm" className="w-full h-8 text-[10px] font-bold rounded-lg shadow-sm">
+                  <h3 className="font-bold text-base leading-tight mb-1 text-foreground font-sans">{spot.name}</h3>
+                  <p className="text-[10px] text-muted-foreground mb-3 font-medium uppercase tracking-widest font-sans">{spot.district}</p>
+                  <Button asChild size="sm" className="w-full h-8 text-[10px] font-bold rounded-lg shadow-sm text-white font-sans">
                     <Link href={`/spots/${spot.id}`}>View Details</Link>
                   </Button>
                 </div>
@@ -91,19 +91,19 @@ export default function MapPage() {
 
       <div className="absolute top-4 left-4 z-[400] flex flex-col gap-2">
         <div className="bg-background/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg border border-border/50">
-          <h2 className="font-bold text-xs uppercase tracking-widest text-primary">Vienna Map</h2>
-          <p className="text-[10px] text-muted-foreground font-bold">{filteredSpots.length} spots found</p>
+          <h2 className="font-bold text-xs uppercase tracking-widest text-primary font-sans">Vienna Map</h2>
+          <p className="text-[10px] text-muted-foreground font-bold font-sans">{filteredSpots.length} spots found</p>
         </div>
         <Sheet>
           <SheetTrigger asChild>
-            <Button size="sm" variant="secondary" className="bg-background/90 backdrop-blur-md shadow-lg border-border/50 font-bold h-9">
+            <Button size="sm" variant="secondary" className="bg-background/90 backdrop-blur-md shadow-lg border-border/50 font-bold h-9 font-sans">
               <SlidersHorizontal className="w-3.5 h-3.5 mr-2" /> Filters
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="w-[300px]">
             <SheetHeader className="mb-6"><SheetTitle className="font-sans font-bold">Map Filters</SheetTitle></SheetHeader>
             <div className="space-y-6">
-              <div className="space-y-4">
+              <div className="space-y-4 font-sans">
                 <div className="flex items-center space-x-3">
                   <Checkbox id="map-openNow" checked={filters.openNow} onCheckedChange={(c) => setFilters(f => ({ ...f, openNow: !!c }))} />
                   <Label htmlFor="map-openNow" className="font-medium">Open Now</Label>
@@ -113,7 +113,7 @@ export default function MapPage() {
                   <Label htmlFor="map-openSunday" className="font-medium">Open on Sunday</Label>
                 </div>
               </div>
-              <Button className="w-full font-bold h-11 rounded-xl" onClick={() => setAppliedFilters(filters)}>Apply Filters</Button>
+              <Button className="w-full font-bold h-11 rounded-xl font-sans" onClick={() => setAppliedFilters(filters)}>Apply Filters</Button>
             </div>
           </SheetContent>
         </Sheet>

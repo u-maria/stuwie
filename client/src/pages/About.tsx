@@ -18,8 +18,8 @@ export default function About() {
           className="space-y-10"
         >
           <div className="space-y-4">
-            <h1 className="text-4xl md:text-5xl font-serif font-bold text-foreground">About</h1>
-            <p className="text-xl text-muted-foreground italic">Meet the team behind this project!</p>
+            <h1 className="text-4xl md:text-5xl font-sans font-bold text-foreground">About</h1>
+            <p className="text-xl text-muted-foreground italic font-sans">Meet the team behind this project!</p>
           </div>
 
           <div className="prose prose-lg dark:prose-invert prose-slate max-w-none space-y-6 text-foreground/90 leading-relaxed">

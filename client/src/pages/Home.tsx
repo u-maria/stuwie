@@ -43,7 +43,7 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
         <Sparkles className="w-8 h-8 fill-current" />
       </motion.div>
 
-      <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Try this spot today</p>
+      <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left font-sans">Try this spot today</p>
       <motion.div
         whileHover={prefersReducedMotion ? {} : { y: -8, scale: 1.02 }}
         initial={{ opacity: 0, scale: 0.98 }}
@@ -64,17 +64,34 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
                 <BookOpen className="w-4 h-4 md:w-6 md:h-6" />
               </div>
               <div>
-                <div className="font-bold text-sm md:text-xl text-foreground leading-tight">{featuredSpot.name}</div>
-                <div className="text-[10px] md:text-sm text-muted-foreground font-medium">
+                <div className="font-bold text-sm md:text-xl text-foreground leading-tight font-sans">{featuredSpot.name}</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground font-medium font-sans">
                   {featuredSpot.district} • {featuredSpot.hasWifi ? "WiFi" : "WiFi avail."}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-sm md:text-lg font-bold text-[#EE9BB6]">
+            <div className="flex items-center gap-1 text-sm md:text-lg font-bold text-[#EE9BB6] font-sans">
               <Star className="w-3 h-3 md:w-5 md:h-5 fill-current" />
               {stats.reviewCount > 0 ? stats.avgRating.toFixed(1) : "New"}
             </div>
           </div>
+
+          <AnimatePresence>
+            {isHovered && !prefersReducedMotion && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="hidden md:block overflow-hidden"
+              >
+                <div className="pt-4 mt-4 border-t border-border/40 flex flex-wrap gap-2">
+                  {featuredSpot.hasWifi && <Badge variant="secondary" className="bg-accent/10 text-accent border-none text-[10px] font-sans">Fast WiFi</Badge>}
+                  {featuredSpot.hasOutlets && <Badge variant="secondary" className="bg-accent/10 text-accent border-none text-[10px] font-sans">Outlets</Badge>}
+                  {featuredSpot.sundayOpen && <Badge variant="secondary" className="bg-accent/10 text-accent border-none text-[10px] font-sans">Sunday-safe</Badge>}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </motion.div>
     </div>
@@ -105,14 +122,14 @@ export default function Home() {
       <main className="flex-1 flex flex-col md:flex-row items-center md:items-start justify-center p-6 md:p-16 max-w-screen-2xl mx-auto w-full gap-8 md:gap-16 lg:gap-24 md:pt-20">
         
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 max-w-3xl space-y-6 md:space-y-8 md:mt-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-[10px] md:text-xs font-bold uppercase tracking-widest">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-[10px] md:text-xs font-bold uppercase tracking-widest font-sans">
             <Coffee className="w-3.5 h-3.5" />
             <span>Vienna's Best Study Spots</span>
           </div>
           
-          <h1 className="text-4xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground leading-[1.1] tracking-tight">
+          <h1 className="text-4xl md:text-7xl lg:text-8xl font-sans font-bold text-foreground leading-[1.1] tracking-tight">
             Find your perfect <br />
-            <span className="text-primary italic relative">
+            <span className="text-primary italic relative font-sans">
               focus space.
               <div className="absolute bottom-1 md:bottom-2 left-0 w-full h-2 md:h-3 bg-[#EE9BB6]/20 -z-10 rounded-full" />
             </span>
@@ -120,29 +137,29 @@ export default function Home() {
           
           <div className="h-12 md:h-16">
             <AnimatePresence mode="wait">
-              <motion.p key={currentMotto} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-base md:text-2xl text-muted-foreground font-medium">
+              <motion.p key={currentMotto} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-base md:text-2xl text-muted-foreground font-medium font-sans">
                 {MOTTOS[currentMotto]}
               </motion.p>
             </AnimatePresence>
           </div>
           
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button asChild size="lg" className="rounded-full px-8 h-12 md:h-14 text-base md:text-lg font-bold shadow-lg shadow-primary/10">
+            <Button asChild size="lg" className="rounded-full px-8 h-12 md:h-14 text-base md:text-lg font-bold shadow-lg shadow-primary/10 font-sans">
               <Link href="/spots"><Search className="w-5 h-5 mr-2" /> Browse Spots</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full px-8 h-12 md:h-14 text-base md:text-lg font-bold border-2">
+            <Button asChild size="lg" variant="outline" className="rounded-full px-8 h-12 md:h-14 text-base md:text-lg font-bold border-2 font-sans">
               <Link href="/map"><Map className="w-5 h-5 mr-2" /> Explore Map</Link>
             </Button>
           </div>
 
           <div className="pt-8 flex gap-12 border-t border-border/40">
             <div>
-              <div className="text-2xl md:text-4xl font-serif font-bold">120+</div>
-              <div className="text-xs md:text-sm text-muted-foreground font-medium">Curated Spots</div>
+              <div className="text-2xl md:text-4xl font-sans font-bold">120+</div>
+              <div className="text-xs md:text-sm text-muted-foreground font-medium font-sans">Curated Spots</div>
             </div>
             <div>
-              <div className="text-2xl md:text-4xl font-serif font-bold text-[#EE9BB6]">4.8</div>
-              <div className="text-xs md:text-sm text-muted-foreground font-medium">Avg Rating</div>
+              <div className="text-2xl md:text-4xl font-sans font-bold text-[#EE9BB6]">4.8</div>
+              <div className="text-xs md:text-sm text-muted-foreground font-medium font-sans">Avg Rating</div>
             </div>
           </div>
         </motion.div>

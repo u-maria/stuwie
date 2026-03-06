@@ -1,0 +1,78 @@
+Make a SMALL corrective pass only. Do NOT redesign anything. Do NOT touch SEO. Do NOT change layout structure. Most of the site is already good. Focus only on the issues below.
+
+TOP PRIORITY: FONT CONSISTENCY IN HEADINGS / HERO / KEY LABELS
+The main problem is that San Francisco was NOT fully applied to important headings and hero text. Fix this carefully and completely.
+
+Use ONLY this UI font stack everywhere on the site unless a very specific existing decorative accent must remain:
+system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif
+
+IMPORTANT:
+- We are NOT using any other main fonts on this site.
+- Audit shared heading styles, component-level overrides, and page-level title styles.
+- Remove any remaining old font declarations from headings, hero text, labels, auth modals, and stat numbers.
+- This is the main focus of this pass.
+
+These texts/components MUST be in San Francisco:
+- “Find your perfect focus space”
+- “Vienna’s best study spots”
+- “Try this spot today”
+- homepage stat numbers like “120+” and “4.8”
+- “Discover spots”
+- “Vienna map”
+- “About”
+- “Create your account”
+- “Sign in to Stuwie”
+- spot detail page titles / café names
+- auth modal/dialog headings
+- major section headings across the site
+
+Repeat: these headings must use San Francisco, not the old font.
+
+SECOND PRIORITY: FIX ROUNDED CORNERS / BORDER RADIUS
+Some buttons/cards/images now have ugly heavy-looking corners, like border radius got layered or exaggerated.
+- Normalize border radius across buttons, cards, popups, and rounded containers.
+- Make rounded corners elegant and clean, not thick/heavy.
+- If needed, revert rounded corners closer to the earlier cleaner version.
+- Keep thin borders where they already look good.
+- Do NOT over-round elements.
+
+THIRD PRIORITY: MAP POPUP “VIEW DETAILS” BUTTON
+The map popup is mostly fixed, but the “View Details” button still has bad contrast.
+- Make the button text white.
+- Remove any blue text or blue border from this button.
+- The button should match the site palette and be clearly readable.
+
+FOURTH PRIORITY: HOMEPAGE FEATURED CARD HOVER
+Do NOT remove the useful hover behavior.
+- Keep the improved smaller overlay card size.
+- But restore the richer hover interaction on desktop for the “Try this spot today” featured spot card.
+- On hover, the white overlay card should expand/reveal a bit more useful info again (for example hours/tags/extra metadata), instead of only slightly lifting.
+- Keep mobile behavior simple; this richer reveal is mainly for desktop hover.
+
+FIFTH PRIORITY: REVIEW MODAL STAR SELECTION
+In the demo review form, star rating selection should be clickable.
+- Make the stars interactive/selectable in the modal.
+- No backend needed.
+- Keep submit behavior demo-only:
+  after submit, still show the popup saying:
+  “Please sign in or create an account to leave a review.”
+- Popup duration can be slightly shorter if it currently lingers too long.
+
+SAFETY RULES:
+- Do NOT change the desktop header layout.
+- Do NOT change mobile nav structure again.
+- Do NOT do another broad redesign pass.
+- Only fix the issues listed above.
+
+Before finishing, verify specifically:
+1) all key headings listed above are truly rendered in San Francisco
+2) homepage hero text is San Francisco
+3) homepage stat numbers are San Francisco
+4) auth headings are San Francisco
+5) spot detail titles are San Francisco
+6) rounded corners look clean and not bloated
+7) “View Details” text on map popup is white and readable
+8) featured homepage card hover reveals extra info again on desktop
+9) stars in review modal are clickable
+
+Output only the minimal code/file changes needed.

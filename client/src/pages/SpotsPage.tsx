@@ -154,7 +154,7 @@ export default function SpotsPage() {
       />
       <div className="bg-secondary/30 border-b border-border/50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl md:text-4xl font-serif font-bold text-foreground mb-4">Discover Spots</h1>
+          <h1 className="text-3xl md:text-4xl font-sans font-bold text-foreground mb-4">Discover Spots</h1>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
