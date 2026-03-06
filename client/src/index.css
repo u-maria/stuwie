@@ -10,9 +10,8 @@
     --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
     --font-serif: 'Lora', serif;
 
-    /* Modernized palette with Pastel Magenta accent */
-    --background: 40 33% 96%; /* #F8F5F0 */
-    --foreground: 20 10% 15%; /* #2A2826 */
+    --background: 40 33% 96%;
+    --foreground: 20 10% 15%;
     
     --card: 0 0% 100%;
     --card-foreground: 20 10% 15%;
@@ -20,16 +19,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 20 10% 15%;
     
-    --primary: 25 35% 45%; /* Earthy Terracotta */
+    --primary: 25 35% 45%;
     --primary-foreground: 40 33% 96%;
     
-    --secondary: 40 20% 90%; /* Deeper Beige */
+    --secondary: 40 20% 90%;
     --secondary-foreground: 20 10% 15%;
     
     --muted: 40 20% 92%;
     --muted-foreground: 20 5% 45%;
     
-    --accent: 340 68% 77%; /* Pastel Magenta #EE9BB6 */
+    --accent: 340 68% 77%;
     --accent-foreground: 20 10% 15%;
     
     --destructive: 0 60% 50%;
@@ -37,7 +36,7 @@
     
     --border: 40 15% 85%;
     --input: 40 15% 85%;
-    --ring: 340 68% 77%; /* Pastel Magenta focus ring */
+    --ring: 340 68% 77%;
     
     --radius: 1rem;
   }
@@ -50,11 +49,9 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply tracking-tight;
-    font-family: var(--font-sans); /* Overriding serif for global SF consistency as requested */
+    @apply tracking-tight font-sans;
   }
 
-  /* Specific serif use for brand/hero if needed */
   .font-serif {
     font-family: var(--font-serif);
   }
@@ -64,7 +61,6 @@
   }
 }
 
-/* Scroll animations */
 @layer utilities {
   .animate-reveal {
     animation: reveal 0.8s cubic-bezier(0, 0, 0.2, 1) forwards;
@@ -90,9 +86,13 @@
   }
 }
 
-/* Custom styles for pastel magenta integration */
 .nav-link-active {
-  @apply text-primary border-b-2 border-accent;
+  @apply text-primary relative;
+}
+
+.nav-link-active::after {
+  content: '';
+  @apply absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full;
 }
 
 .focus-magenta:focus-visible {
@@ -103,20 +103,21 @@
   @apply ring-2 ring-accent ring-offset-2;
 }
 
-/* Fix for Leaflet controls on mobile */
-.leaflet-control-container .leaflet-routing-container-hide {
-    display: none;
-}
+/* Leaflet Overrides */
 .leaflet-popup-content-wrapper {
   border-radius: var(--radius);
   font-family: var(--font-sans);
-  @apply shadow-2xl border-none;
+  @apply shadow-2xl border-none p-0 overflow-hidden;
 }
 .leaflet-popup-content {
-  margin: 0;
+  margin: 0 !important;
+  width: 256px !important;
 }
 .leaflet-container {
   font-family: var(--font-sans);
+}
+.leaflet-popup-tip-container {
+  display: none;
 }
 
 .text-magenta {
@@ -129,8 +130,4 @@
 
 .border-magenta {
   border-color: #EE9BB6;
-}
-
-.decoration-magenta {
-  text-decoration-color: #EE9BB6;
 }

@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { Link, useLocation } from "wouter";
+import { useState, useEffect, useCallback } from "react";
+import { useLocation, Link } from "wouter";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Search, Map, Coffee, BookOpen, Star, Wifi, Plug, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,7 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
   const [, setLocation] = useLocation();
   const [featuredSpot, setFeaturedSpot] = useState<any>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (spots && spots.length > 0) {
@@ -33,82 +34,47 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
   const imageUrl = featuredSpot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80";
 
   return (
-    <div className="space-y-4 w-full max-w-lg mx-auto relative animate-reveal">
-      {/* Decorative Sparkles */}
+    <div className="space-y-3 w-full max-w-lg mx-auto relative animate-reveal">
       <motion.div 
-        animate={{ scale: [1, 1.2, 1], rotate: [0, 10, 0] }}
-        transition={{ duration: 3, repeat: Infinity }}
-        className="absolute -top-6 -right-6 text-[#EE9BB6] hidden md:block"
+        animate={{ scale: [1, 1.1, 1], rotate: [0, 5, 0] }}
+        transition={{ duration: 4, repeat: Infinity }}
+        className="absolute -top-4 -right-4 text-[#EE9BB6] hidden md:block"
       >
-        <Sparkles className="w-10 h-10 fill-current" />
+        <Sparkles className="w-8 h-8 fill-current" />
       </motion.div>
 
-      <p className="text-base font-bold text-muted-foreground uppercase tracking-[0.2em] text-center md:text-left">Try this spot today</p>
+      <p className="text-xs md:text-sm font-bold text-muted-foreground uppercase tracking-widest text-center md:text-left">Try this spot today</p>
       <motion.div
-        whileHover={{ y: -12, scale: 1.04 }}
-        initial={{ opacity: 0, scale: 0.95 }}
+        whileHover={prefersReducedMotion ? {} : { y: -8, scale: 1.02 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.5 }}
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
         onClick={() => setLocation(`/spots/${featuredSpot.id}`)}
-        className="relative rounded-[32px] overflow-hidden shadow-2xl shadow-black/15 aspect-[4/5] md:aspect-square cursor-pointer border-[10px] border-white group"
+        className="relative rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl cursor-pointer border-[6px] md:border-[10px] border-white group"
       >
-        <img 
-          src={imageUrl} 
-          alt={featuredSpot.name} 
-          className="w-full h-full object-cover rounded-[22px]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none rounded-[22px]" />
+        <img src={imageUrl} alt={featuredSpot.name} className="w-full h-full object-cover aspect-[4/5] md:aspect-square" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
         
-        <div className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-xl transition-all duration-300">
-          <div className="flex items-center justify-between gap-3 mb-1">
-            <div className="flex items-center gap-4">
-              <div className="bg-primary/10 p-3 rounded-xl text-primary">
-                <BookOpen className="w-6 h-6" />
+        <div className="absolute bottom-3 left-3 right-3 md:bottom-6 md:left-6 md:right-6 bg-white/95 backdrop-blur-md p-3 md:p-6 rounded-xl md:rounded-2xl shadow-lg transition-all duration-300">
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 md:gap-4">
+              <div className="bg-primary/10 p-1.5 md:p-3 rounded-lg text-primary hidden sm:block">
+                <BookOpen className="w-4 h-4 md:w-6 md:h-6" />
               </div>
               <div>
-                <div className="font-bold text-xl text-foreground leading-tight">{featuredSpot.name}</div>
-                <div className="text-sm text-muted-foreground font-medium">
-                  {featuredSpot.district} Wien • {featuredSpot.hasWifi ? "Fast WiFi" : "WiFi available"}
+                <div className="font-bold text-sm md:text-xl text-foreground leading-tight">{featuredSpot.name}</div>
+                <div className="text-[10px] md:text-sm text-muted-foreground font-medium">
+                  {featuredSpot.district} • {featuredSpot.hasWifi ? "WiFi" : "WiFi avail."}
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-1 text-lg font-bold text-[#EE9BB6]">
-              <Star className="w-5 h-5 fill-current" />
+            <div className="flex items-center gap-1 text-sm md:text-lg font-bold text-[#EE9BB6]">
+              <Star className="w-3 h-3 md:w-5 md:h-5 fill-current" />
               {stats.reviewCount > 0 ? stats.avgRating.toFixed(1) : "New"}
             </div>
           </div>
-
-          <AnimatePresence>
-            {isHovered && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="pt-4 border-t border-border/50 mt-4 flex flex-wrap gap-2">
-                  {featuredSpot.hasWifi && (
-                    <Badge variant="secondary" className="bg-[#EE9BB6]/10 text-[#EE9BB6] border-none text-xs h-6 px-3">
-                      <Wifi className="w-3.5 h-3.5 mr-1.5" /> Fast WiFi
-                    </Badge>
-                  )}
-                  {featuredSpot.hasOutlets && (
-                    <Badge variant="secondary" className="bg-[#EE9BB6]/10 text-[#EE9BB6] border-none text-xs h-6 px-3">
-                      <Plug className="w-3.5 h-3.5 mr-1.5" /> Outlets
-                    </Badge>
-                  )}
-                  {featuredSpot.sundayOpen && (
-                    <Badge variant="secondary" className="bg-[#EE9BB6]/10 text-[#EE9BB6] border-none text-xs h-6 px-3">
-                      <Clock className="w-3.5 h-3.5 mr-1.5" /> Sunday-safe
-                    </Badge>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
       </motion.div>
     </div>
@@ -116,118 +82,74 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
 }
 
 export default function Home() {
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isLoading: authLoading } = useAuth();
   const { data: spots } = useSpots({ status: "approved" });
   const [currentMotto, setCurrentMotto] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  const nextMotto = useCallback(() => {
-    setCurrentMotto((prev) => (prev + 1) % MOTTOS.length);
-  }, []);
-
   useEffect(() => {
-    if (isPaused || prefersReducedMotion) return;
-    const interval = setInterval(nextMotto, 3000);
+    if (prefersReducedMotion) return;
+    const interval = setInterval(() => setCurrentMotto(m => (m + 1) % MOTTOS.length), 3000);
     return () => clearInterval(interval);
-  }, [isPaused, nextMotto, prefersReducedMotion]);
+  }, [prefersReducedMotion]);
 
   if (authLoading) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="min-h-[calc(100vh-5rem)] flex flex-col relative overflow-hidden">
-      <SEO 
-        title="Find your perfect focus space" 
-        description="The curated directory of study-friendly cafés and spaces in Vienna. Find WiFi, power outlets, and Sunday-safe spots." 
-        path="/"
-      />
-      {/* Decorative Background Elements */}
+      <SEO title="Find your perfect focus space" description="Curated study-friendly cafés in Vienna." path="/" />
+      
       <div className="absolute top-[10%] left-[-5%] w-64 h-64 bg-[#EE9BB6]/10 blur-[100px] rounded-full -z-10" />
       <div className="absolute bottom-[20%] right-[-5%] w-96 h-96 bg-primary/10 blur-[120px] rounded-full -z-10" />
 
-      <main className="flex-1 flex flex-col md:flex-row items-start justify-center p-8 md:p-16 max-w-screen-2xl mx-auto w-full gap-16 lg:gap-32 pt-12 md:pt-24">
+      <main className="flex-1 flex flex-col md:flex-row items-center md:items-start justify-center p-6 md:p-16 max-w-screen-2xl mx-auto w-full gap-8 md:gap-16 lg:gap-24 md:pt-20">
         
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="flex-1 max-w-3xl space-y-10 md:mt-12"
-        >
-          <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-sm font-black uppercase tracking-widest mb-2">
-            <Coffee className="w-5 h-5" />
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex-1 max-w-3xl space-y-6 md:space-y-8 md:mt-8">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EE9BB6]/15 text-[#EE9BB6] text-[10px] md:text-xs font-bold uppercase tracking-widest">
+            <Coffee className="w-3.5 h-3.5" />
             <span>Vienna's Best Study Spots</span>
           </div>
           
-          <h1 className="text-6xl md:text-8xl font-serif font-bold text-foreground leading-[1.05] tracking-tight">
+          <h1 className="text-4xl md:text-7xl lg:text-8xl font-serif font-bold text-foreground leading-[1.1] tracking-tight">
             Find your perfect <br />
             <span className="text-primary italic relative">
               focus space.
-              <motion.div 
-                initial={{ width: 0 }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 1, delay: 0.5 }}
-                className="absolute bottom-2 left-0 h-3 bg-[#EE9BB6]/30 -z-10 rounded-full"
-              />
+              <div className="absolute bottom-1 md:bottom-2 left-0 w-full h-2 md:h-3 bg-[#EE9BB6]/20 -z-10 rounded-full" />
             </span>
           </h1>
           
-          <div 
-            className="h-16 overflow-hidden"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-            onFocus={() => setIsPaused(true)}
-            onBlur={() => setIsPaused(false)}
-          >
+          <div className="h-12 md:h-16">
             <AnimatePresence mode="wait">
-              <motion.p
-                key={currentMotto}
-                initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 15 }}
-                animate={prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 }}
-                exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: -15 }}
-                transition={{ duration: 0.5 }}
-                className="text-xl md:text-2xl text-muted-foreground max-w-xl leading-relaxed font-bold tracking-tight"
-              >
+              <motion.p key={currentMotto} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="text-base md:text-2xl text-muted-foreground font-medium">
                 {MOTTOS[currentMotto]}
               </motion.p>
             </AnimatePresence>
           </div>
           
-          <div className="flex flex-col sm:flex-row gap-6 pt-6">
-            <Button asChild size="xl" className="rounded-full px-12 h-16 text-xl shadow-xl shadow-primary/25 hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-400 font-black tracking-tight">
-              <Link href="/spots">
-                <Search className="w-6 h-6 mr-3" />
-                Browse Spots
-              </Link>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <Button asChild size="lg" className="rounded-full px-8 h-12 md:h-14 text-base md:text-lg font-bold shadow-lg shadow-primary/10">
+              <Link href="/spots"><Search className="w-5 h-5 mr-2" /> Browse Spots</Link>
             </Button>
-            <Button asChild size="xl" variant="outline" className="rounded-full px-12 h-16 text-xl border-3 hover:bg-secondary/60 transition-all duration-400 font-black tracking-tight">
-              <Link href="/map">
-                <Map className="w-6 h-6 mr-3" />
-                Explore Map
-              </Link>
+            <Button asChild size="lg" variant="outline" className="rounded-full px-8 h-12 md:h-14 text-base md:text-lg font-bold border-2">
+              <Link href="/map"><Map className="w-5 h-5 mr-2" /> Explore Map</Link>
             </Button>
           </div>
 
-          <div className="pt-12 grid grid-cols-2 md:grid-cols-3 gap-10 border-t border-border/60 mt-12">
+          <div className="pt-8 flex gap-12 border-t border-border/40">
             <div>
-              <div className="text-4xl font-serif font-bold text-foreground">120+</div>
-              <div className="text-base text-muted-foreground font-bold tracking-tight">Curated Spots</div>
+              <div className="text-2xl md:text-4xl font-serif font-bold">120+</div>
+              <div className="text-xs md:text-sm text-muted-foreground font-medium">Curated Spots</div>
             </div>
             <div>
-              <div className="text-4xl font-serif font-bold text-[#EE9BB6]">4.8</div>
-              <div className="text-base text-muted-foreground font-bold tracking-tight">Average Rating</div>
+              <div className="text-2xl md:text-4xl font-serif font-bold text-[#EE9BB6]">4.8</div>
+              <div className="text-xs md:text-sm text-muted-foreground font-medium">Avg Rating</div>
             </div>
           </div>
         </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.9, delay: 0.3 }}
-          className="flex-1 w-full"
-        >
+        <div className="flex-1 w-full max-w-md md:max-w-none">
           <FeaturedSpotHeroCard spots={spots || []} />
-        </motion.div>
-
+        </div>
       </main>
     </div>
   );

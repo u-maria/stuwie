@@ -1,0 +1,171 @@
+Make the following fixes across the website in ONE careful pass. Priority: preserve the current desktop experience and do NOT break the existing desktop header/layout. Only adjust desktop where explicitly requested below. Focus on bug fixes, consistency, and a polished mobile experience. Keep the current beige/brown/pastel-magenta style. Do NOT touch SEO. Do NOT change database schema. Do NOT remove existing content.
+
+IMPORTANT SAFETY RULE:
+- Do NOT redesign the desktop site.
+- Do NOT change desktop header structure.
+- Apply layout restructuring only inside mobile breakpoints where specified.
+- For desktop, only fix the specific inconsistencies listed below.
+
+1) GLOBAL TYPOGRAPHY CONSISTENCY
+- Audit all routes/components and fully apply San Francisco as the primary UI font everywhere except where the current hero italic/accent styling is intentionally decorative.
+- Use one consistent SF stack across the whole site: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif
+- Remove remaining component-level font overrides that still use old fonts.
+- This must include:
+  - navbar items
+  - badges/labels
+  - spot titles on detail pages
+  - section headings
+  - map popup text
+  - buttons
+  - legal notice text
+- Keep the decorative/italic hero accent only where it already intentionally exists.
+- Reduce unnecessary heavy bold/caps/italic across the rest of the site:
+  - do not overuse bold
+  - do not overuse all caps
+  - do not overuse italic in large text blocks
+- Legal Notice should use a calm, neutral text style:
+  - no bold personal info
+  - no unnecessary italic
+  - readable, clean body text styling
+
+2) HOMEPAGE DESKTOP — FIX COHERENCE / TOO MUCH EMPTY SPACE
+Do NOT redesign the desktop homepage, but tighten the composition so it feels more intentional and less awkward.
+- Reduce excessive empty space between hero text, CTA area, featured spot card, and stats.
+- Make the homepage feel more coherent and less like elements are floating far apart.
+- Keep the existing visual hierarchy and desktop header structure.
+- Do NOT radically move things around; this is a spacing/alignment polish pass only.
+- Ensure the featured spot card and hero content feel compositionally connected.
+
+3) MOBILE HEADER / MOBILE NAV — RESTRUCTURE ONLY ON MOBILE
+Current mobile header/nav is visually broken: logo and Sign In get hidden/overlapped, and the navigation is too crowded.
+On mobile only, restructure the header into 2 layers:
+Layer 1:
+- logo on the left
+- Sign In on the right
+Layer 2:
+- a simplified main navbar below with ONLY:
+  - Browse
+  - Map
+  - About
+- Remove Home and Join from the mobile navbar.
+- The logo should navigate to Home when clicked.
+- Keep the demo banner as is (it is already dismissible).
+- Make sure the logo is clearly visible on mobile:
+  - not hidden behind nav
+  - not clipped
+  - not too faint
+  - not overlapped by any layer
+- Debug z-index / opacity / overflow / flex-shrink / positioning issues causing logo + Sign In to disappear or sit underneath other elements.
+- Keep the mobile navbar readable and clean.
+- Navbar background should be slightly more transparent, but still have readable contrast.
+
+4) MOBILE HOMEPAGE — COMPACT / POLISHED
+On mobile only:
+- Reduce the oversized/too-airy feeling of the homepage.
+- Tighten vertical spacing so the page feels more compact and polished.
+- Reduce excessive gaps between:
+  - hero badge
+  - hero headline
+  - subheadline
+  - CTAs
+  - stats
+- Slightly improve mobile line-height / spacing in the hero so it feels intentional, not stretched.
+
+5) FEATURED SPOT CARD (TRY THIS SPOT TODAY)
+Keep desktop behavior unless needed for consistency, but improve the component where necessary.
+On mobile:
+- Reduce the size of the overlay/info card on top of the featured café image.
+- It currently covers too much of the photo.
+- Make the overlay more compact with smaller padding/height so more of the image remains visible.
+- On touch devices, disable or soften hover enlargement effects so the card does not behave awkwardly on phones.
+Desktop:
+- keep the current general structure, only improve if needed for consistency.
+
+6) REVIEWS → RATINGS CONSISTENCY ACROSS ALL PAGES
+Make sure the same café always shows the same rating and review count everywhere.
+- The map popup currently shows outdated/incorrect ratings (e.g. 0.0) while detail pages show real ratings like 4.5.
+- Fix the data flow so:
+  - browse cards
+  - homepage featured card
+  - spot detail pages
+  - map popup cards
+all use the SAME computed rating source and SAME review count.
+- If a spot has demo reviews, its map popup must show the correct rating and count.
+- Keep visual formatting consistent everywhere (same style of rating display).
+
+7) MAP POPUP CARD — VISUAL CONSISTENCY
+The map popup cards currently look like an older UI version.
+Fix the map popup cards so they match the rest of the website visually without redesigning them from scratch.
+- Update colors to match the current site palette.
+- Pastel magenta rating stars should match the rest of the site.
+- Remove ugly color clashes (e.g. old brown + blue mismatch).
+- Improve internal spacing/padding so content is not stuck to the edges.
+- Check border radius:
+  - if already consistent with site cards, keep it
+  - if inconsistent, match it to the rest of the site
+- Keep popup cards simple, clean, and visually coherent with the rest of the product.
+
+8) SEARCH NORMALIZATION — “cafe” should match “café”
+Fix the search/filter behavior so queries are accent-insensitive.
+- Searching “cafe” must match “café”
+- Searching “café” must also match “cafe”
+- Normalize both query and searchable fields via lowercase + Unicode normalization + diacritic stripping + trim whitespace
+- Apply this consistently to browse search and any related spot search/filter logic
+
+9) DETAIL PAGES — LEAVE A REVIEW DEMO INTERACTION
+Add a small demo interaction to make reviews feel interactive.
+On each individual café page:
+- Add a “Leave a review” button directly above the reviews list.
+- Clicking it should open a small modal/demo review form.
+- Keep it lightweight and visually consistent with the site.
+- Form can be minimal (for example name / rating / comment, or similarly simple).
+- On submit:
+  - do NOT actually save anything
+  - do NOT require backend
+  - show a popup message:
+    “Please sign in or create an account to leave a review.”
+- This is demo-only UX.
+- After popup, the modal can remain open or close — whichever is simpler/stabler.
+- Do not fake successful review submission.
+
+10) DETAIL PAGES — NAVIGATION BETWEEN CAFÉS
+Improve browsing UX on individual spot pages.
+- Keep a clear “← Back to Browse” control as a separate element.
+- Add previous/next café navigation as semi-transparent arrow controls over the hero image:
+  - left arrow = previous café
+  - right arrow = next café
+- Follow the same ordering as the Browse page.
+- If the user is on the first café, disable the previous arrow.
+- If the user is on the last café, disable the next arrow.
+- These arrows should NOT replace Back to Browse.
+- They should be visually clear but subtle, and should not clutter the page.
+
+11) LEGAL NOTICE — CALM / COHERENT STYLING
+Keep the page simple and serious.
+- Ensure all personal/contact info uses consistent size, color, spacing, and non-bold styling.
+- No decorative typography overload.
+- Make the whole page feel coherent and clean.
+
+12) AUTH ROUTING
+- Keep Sign In routed to its own stable sign-in page.
+- Do not break the current desktop auth behavior.
+- On mobile, Sign In remains visible in the top brand row.
+
+13) QA / REGRESSION CHECK
+Before finishing, verify:
+- desktop header remains intact
+- desktop homepage still looks as before, only tighter/more coherent
+- mobile header now shows logo + Sign In correctly
+- mobile nav only shows Browse / Map / About
+- logo click goes Home
+- map popup ratings match detail page ratings
+- pastel magenta stars are consistent on map and spot pages
+- “cafe” search finds “café”
+- Leave a review modal opens
+- submit shows the sign-in popup message
+- previous/next café arrows work in Browse order
+- Back to Browse still works
+- no dead buttons
+- no crashes
+
+Output only the code/file changes needed. Keep the changes minimal, safe, and consistent with the current architecture.
