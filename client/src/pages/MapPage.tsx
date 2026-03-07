@@ -79,9 +79,9 @@ export default function MapPage() {
                 <div className="p-4">
                   <h3 className="font-bold text-base leading-tight mb-1 text-foreground font-sans">{spot.name}</h3>
                   <p className="text-[10px] text-muted-foreground mb-3 font-medium uppercase tracking-wider font-sans">{spot.district}</p>
-                  <Button asChild size="sm" className="w-full h-8 text-[10px] font-bold rounded-lg shadow-sm bg-primary hover:bg-primary/90 text-white border-0 font-sans">
-                    <Link href={`/spots/${spot.id}`}>View Details</Link>
-                  </Button>
+                  <Link href={`/spots/${spot.id}`} className="w-full h-8 flex items-center justify-center text-[10px] font-bold rounded-lg shadow-sm bg-primary hover:bg-primary/90 text-white border-0 font-sans !text-white transition-colors">
+                    View Details
+                  </Link>
                 </div>
               </div>
             </Popup>
