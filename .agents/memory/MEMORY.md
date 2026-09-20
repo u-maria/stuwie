@@ -1,0 +1,1 @@
+- [Production database freeze](deployment-db-freeze.md) — a frozen Replit production DB can make a populated local directory appear empty in the published app.

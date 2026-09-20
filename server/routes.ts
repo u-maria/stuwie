@@ -12,6 +12,7 @@ import { setupAuth, isAuthenticated, authStorage } from "./replit_integrations/a
 import { registerAuthRoutes } from "./replit_integrations/auth/routes";
 import { api } from "@shared/routes";
 import { z } from "zod";
+import { getFallbackSpot, getFallbackSpots } from "./fallback-spots";
 
 export async function registerRoutes(
   httpServer: Server,
@@ -225,17 +226,29 @@ export async function registerRoutes(
 
       res.json(result);
     } catch (e) {
-      console.error(e);
-      res.status(500).json({ message: "Internal Error" });
+      console.error("Study spots database unavailable; serving curated fallback spots.", e);
+      res.json(getFallbackSpots({
+        status: req.query.status as string,
+        district: req.query.district as string,
+        hasWifi: req.query.hasWifi as string,
+        hasOutlets: req.query.hasOutlets as string,
+      }));
     }
   });
 
   app.get(api.spots.get.path, async (req, res) => {
-    const spot = await storage.getStudySpot(Number(req.params.id));
-    if (!spot) return res.status(404).json({ message: "Not found" });
-    const images = await storage.getSpotImages(spot.id);
-    const creator = spot.createdByUserId ? await authStorage.getUser(spot.createdByUserId) : null;
-    res.json({ ...spot, images, creator });
+    try {
+      const spot = await storage.getStudySpot(Number(req.params.id));
+      if (!spot) return res.status(404).json({ message: "Not found" });
+      const images = await storage.getSpotImages(spot.id);
+      const creator = spot.createdByUserId ? await authStorage.getUser(spot.createdByUserId) : null;
+      res.json({ ...spot, images, creator });
+    } catch (e) {
+      console.error("Study spot database unavailable; serving curated fallback spot.", e);
+      const spot = getFallbackSpot(Number(req.params.id));
+      if (!spot) return res.status(404).json({ message: "Not found" });
+      res.json(spot);
+    }
   });
 
   app.post(api.spots.create.path, isAuthenticated, async (req: any, res) => {
