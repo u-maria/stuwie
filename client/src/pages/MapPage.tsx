@@ -64,7 +64,10 @@ export default function MapPage() {
   return (
     <div className="h-[calc(100vh-4rem)] md:h-[calc(100vh-5rem)] w-full relative z-0">
       <MapContainer center={[48.2082, 16.3738]} zoom={13} className="w-full h-full" zoomControl={false}>
-        <TileLayer attribution='&copy; CARTO' url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+        <TileLayer
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">OpenStreetMap</a> contributors'
+          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+        />
         {filteredSpots.map((spot) => spot.lat && spot.lng && (
           <Marker key={spot.id} position={[spot.lat, spot.lng]}>
             <Popup>
