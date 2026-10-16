@@ -11,7 +11,6 @@ export interface IStorage {
   getStudySpots(): Promise<StudySpot[]>;
   getStudySpot(id: number): Promise<StudySpot | undefined>;
   createStudySpot(spot: InsertStudySpot): Promise<StudySpot>;
-  updateStudySpot(id: number, updates: Partial<InsertStudySpot>): Promise<StudySpot>;
   updateStudySpotStatus(id: number, status: string): Promise<StudySpot>;
   
   // Spot Images
@@ -35,14 +34,6 @@ export class DatabaseStorage implements IStorage {
   async createStudySpot(spot: InsertStudySpot): Promise<StudySpot> {
     const [newSpot] = await db.insert(studySpots).values(spot).returning();
     return newSpot;
-  }
-
-  async updateStudySpot(id: number, updates: Partial<InsertStudySpot>): Promise<StudySpot> {
-    const [updatedSpot] = await db.update(studySpots)
-      .set(updates)
-      .where(eq(studySpots.id, id))
-      .returning();
-    return updatedSpot;
   }
 
   async updateStudySpotStatus(id: number, status: string): Promise<StudySpot> {
