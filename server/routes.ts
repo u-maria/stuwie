@@ -111,7 +111,7 @@ export async function registerRoutes(
             lng: 16.3532,
             website: "https://www.burggasse24.com",
             googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=Burggasse24%20Caf%C3%A9%20Burggasse%2024%201070%20Wien",
-            photo_url: "https://lokalfuehrer.stadtbekannt.at/wp-content/uploads/2016/04/Burggasse24-c-STADTBEKANNT.jpg",
+            photo_url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80",
             openingHours: {
               mon: { open: "10:00", close: "22:00" },
               tue: { open: "10:00", close: "22:00" },

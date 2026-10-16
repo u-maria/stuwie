@@ -7,6 +7,7 @@ import { useSpots } from "@/hooks/use-spots";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
 import { getSpotStats } from "@/lib/reviews-data";
+import { SpotImage } from "@/components/SpotImage";
 
 const MOTTOS = [
   "Stop guessing. Start studying.",
@@ -30,7 +31,7 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
   if (!featuredSpot) return null;
 
   const stats = getSpotStats(featuredSpot.id);
-  const imageUrl = featuredSpot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80";
+  const imageUrl = featuredSpot.images?.[0]?.url;
 
   return (
     <div className="space-y-3 w-full max-w-lg mx-auto relative animate-reveal">
@@ -53,7 +54,7 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
         onClick={() => setLocation(`/spots/${featuredSpot.id}`)}
         className="relative rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl cursor-pointer border-[6px] md:border-[10px] border-white group"
       >
-        <img src={imageUrl} alt={featuredSpot.name} className="w-full h-full object-cover aspect-[4/5] md:aspect-square" />
+        <SpotImage src={imageUrl} alt={featuredSpot.name} className="w-full h-full object-cover aspect-[4/5] md:aspect-square" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
         
         <div className="absolute bottom-3 left-3 right-3 md:bottom-6 md:left-6 md:right-6 bg-white/95 backdrop-blur-md p-3 md:p-6 rounded-xl md:rounded-2xl shadow-lg transition-all duration-300">
