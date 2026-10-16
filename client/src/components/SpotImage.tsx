@@ -1,12 +1,10 @@
 import { useState, type ImgHTMLAttributes, type SyntheticEvent } from "react";
-import burggasse24Photo from "@assets/burggasse24_1792153581761.jpg";
 
 const FALLBACK_IMAGE_URL =
   "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80";
 
 type SpotImageProps = Omit<ImgHTMLAttributes<HTMLImageElement>, "src"> & {
   src?: string | null;
-  spotWebsite?: string | null;
 };
 
 function ImageWithFallback({
@@ -34,12 +32,8 @@ function ImageWithFallback({
   );
 }
 
-export function SpotImage({ src, spotWebsite, ...props }: SpotImageProps) {
-  const isBurggasse24 =
-    spotWebsite?.toLowerCase().includes("burggasse24.com") ||
-    src?.includes("lokalfuehrer.stadtbekannt.at");
-  const initialSrc = isBurggasse24
-    ? burggasse24Photo
-    : src || FALLBACK_IMAGE_URL;
+export function SpotImage({ src, ...props }: SpotImageProps) {
+  const isKnownBrokenHost = src?.includes("lokalfuehrer.stadtbekannt.at");
+  const initialSrc = src && !isKnownBrokenHost ? src : FALLBACK_IMAGE_URL;
   return <ImageWithFallback key={initialSrc} src={initialSrc} {...props} />;
 }
