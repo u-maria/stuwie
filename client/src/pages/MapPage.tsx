@@ -9,7 +9,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { getSpotStats } from "@/lib/reviews-data";
-import { SpotImage } from "@/components/SpotImage";
 
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -74,7 +73,7 @@ export default function MapPage() {
             <Popup>
               <div className="bg-card w-full">
                 <div className="h-32 w-full bg-muted relative">
-                  <SpotImage src={spot.images?.[0]?.url} alt={spot.name} className="w-full h-full object-cover" />
+                  <img src={spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80"} alt={spot.name} className="w-full h-full object-cover" />
                   <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur text-white px-2 py-1 rounded-md flex items-center gap-1 text-[10px] font-bold font-sans">
                     <Star className="w-3 h-3 text-accent fill-accent" />
                     {spot.reviewCount > 0 ? (spot.avgRating as number).toFixed(1) : "New"}

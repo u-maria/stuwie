@@ -2,13 +2,12 @@ import { Link } from "wouter";
 import { MapPin, Wifi, Plug, Star, Clock } from "lucide-react";
 import type { StudySpotResponse } from "@shared/schema";
 import { Badge } from "@/components/ui/badge";
-import { SpotImage } from "@/components/SpotImage";
 import { getSpotStats } from "@/lib/reviews-data";
 
 export function SpotCard({ spot }: { spot: StudySpotResponse }) {
   const stats = getSpotStats(spot.id);
 
-  const imageUrl = spot.images?.[0]?.url;
+  const imageUrl = spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80";
 
   const getHoursString = () => {
     if (!spot.openingHours) return null;
@@ -30,7 +29,7 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
       className="group flex flex-col bg-card rounded-2xl overflow-hidden border border-border/50 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative animate-reveal h-full"
     >
       <div className="relative h-48 w-full overflow-hidden shrink-0">
-        <SpotImage
+        <img 
           src={imageUrl} 
           alt={spot.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

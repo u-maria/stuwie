@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { useMemo } from "react";
 import { getSpotStats, DEMO_REVIEWS } from "@/lib/reviews-data";
 import { SEO } from "@/components/SEO";
-import { SpotImage } from "@/components/SpotImage";
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const DAY_KEYS = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
@@ -42,7 +41,7 @@ export default function SpotDetail() {
   if (spotLoading) return <div className="min-h-screen bg-background animate-pulse" />;
   if (!spot) return <div className="min-h-screen bg-background flex items-center justify-center font-sans text-2xl">Spot not found</div>;
 
-  const imageUrl = spot.images?.[0]?.url;
+  const imageUrl = spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1920&q=80";
 
   const currentDayKey = DAY_KEYS[(new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Vienna"})).getDay() + 6) % 7];
   const todayHours = (spot.openingHours as any)?.[currentDayKey];
@@ -52,7 +51,7 @@ export default function SpotDetail() {
       <SEO title={`${spot.name} — Study Spot in ${spot.district}`} description={spot.description} path={`/spots/${spot.id}`} />
       
       <div className="relative h-[40vh] md:h-[60vh] w-full animate-reveal">
-        <SpotImage src={imageUrl} alt={spot.name} className="w-full h-full object-cover" />
+        <img src={imageUrl} alt={spot.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/30" />
         
         <div className="absolute top-6 left-6 z-10">

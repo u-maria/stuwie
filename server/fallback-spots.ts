@@ -127,7 +127,7 @@ const fallbackSpots: SpotsListResponse = [
     isSponsored: false,
     rankingWeight: 0,
     createdAt: new Date("2026-02-28T17:28:30.454Z"),
-    images: [{ id: 37, spotId: 37, url: "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=800&q=80", sortOrder: 0 }],
+    images: [{ id: 37, spotId: 37, url: "https://lokalfuehrer.stadtbekannt.at/wp-content/uploads/2016/04/Burggasse24-c-STADTBEKANNT.jpg", sortOrder: 0 }],
   },
   {
     id: 38,
