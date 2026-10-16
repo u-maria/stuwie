@@ -1,13 +1,5 @@
 import type { SpotsListResponse } from "@shared/schema";
 
-const fallbackCreator = {
-  id: "admin-id-123",
-  email: "admin@example.com",
-  firstName: "Admin",
-  lastName: "User",
-  profileImageUrl: null,
-};
-
 const fallbackSpots: SpotsListResponse = [
   {
     id: 34,
@@ -34,14 +26,12 @@ const fallbackSpots: SpotsListResponse = [
     tags: ["spacious", "bright", "big-tables", "sunday-safe", "work-friendly"],
     avgRating: "0",
     reviewCount: 0,
-    createdByUserId: "admin-id-123",
     status: "approved",
     isFeatured: false,
     isSponsored: false,
     rankingWeight: 0,
     createdAt: new Date("2026-02-28T17:28:30.017Z"),
     images: [{ id: 34, spotId: 34, url: "https://www.das-cafe.wien/fileadmin/user_upload/dascafe/_MAR9685_Kopie.jpg", sortOrder: 0 }],
-    creator: fallbackCreator,
   },
   {
     id: 35,
@@ -68,14 +58,12 @@ const fallbackSpots: SpotsListResponse = [
     tags: ["near-uni", "specialty-coffee", "busy", "sunday-safe", "laptop-friendly"],
     avgRating: "0",
     reviewCount: 0,
-    createdByUserId: "admin-id-123",
     status: "approved",
     isFeatured: false,
     isSponsored: false,
     rankingWeight: 0,
     createdAt: new Date("2026-02-28T17:28:30.096Z"),
     images: [{ id: 35, spotId: 35, url: "https://cdn.prod.website-files.com/64b6780f84d27e4bfd91f2d6/6676cfbec142b79bf6bf0b67_jonasreindlalsergrundvienna-6676bd5815d50.webp", sortOrder: 0 }],
-    creator: fallbackCreator,
   },
   {
     id: 36,
@@ -102,14 +90,12 @@ const fallbackSpots: SpotsListResponse = [
     tags: ["sunday-safe", "central-1070", "good-for-2-4h", "work-friendly"],
     avgRating: "0",
     reviewCount: 0,
-    createdByUserId: "admin-id-123",
     status: "approved",
     isFeatured: false,
     isSponsored: false,
     rankingWeight: 0,
     createdAt: new Date("2026-02-28T17:28:30.223Z"),
     images: [{ id: 36, spotId: 36, url: "https://www.area.at/assets/images/c/hornig-7-5s04bvq6f8epjv3.jpg", sortOrder: 0 }],
-    creator: fallbackCreator,
   },
   {
     id: 37,
@@ -136,14 +122,12 @@ const fallbackSpots: SpotsListResponse = [
     tags: ["cozy", "can-be-packed", "short-session", "best-off-peak"],
     avgRating: "0",
     reviewCount: 0,
-    createdByUserId: "admin-id-123",
     status: "approved",
     isFeatured: false,
     isSponsored: false,
     rankingWeight: 0,
     createdAt: new Date("2026-02-28T17:28:30.454Z"),
     images: [{ id: 37, spotId: 37, url: "https://lokalfuehrer.stadtbekannt.at/wp-content/uploads/2016/04/Burggasse24-c-STADTBEKANNT.jpg", sortOrder: 0 }],
-    creator: fallbackCreator,
   },
   {
     id: 38,
@@ -170,14 +154,12 @@ const fallbackSpots: SpotsListResponse = [
     tags: ["late-hours", "afternoon-best", "classic-1070", "sunday-safe"],
     avgRating: "0",
     reviewCount: 0,
-    createdByUserId: "admin-id-123",
     status: "approved",
     isFeatured: false,
     isSponsored: false,
     rankingWeight: 0,
     createdAt: new Date("2026-02-28T17:28:30.468Z"),
     images: [{ id: 38, spotId: 38, url: "https://www.vienna.at/2015/11/siebenstern-6001.jpg", sortOrder: 0 }],
-    creator: fallbackCreator,
   },
 ];
 

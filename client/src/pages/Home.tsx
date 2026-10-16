@@ -3,7 +3,6 @@ import { useLocation, Link } from "wouter";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { Search, Map, Coffee, BookOpen, Star, Wifi, Plug, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/use-auth";
 import { useSpots } from "@/hooks/use-spots";
 import { Badge } from "@/components/ui/badge";
 import { SEO } from "@/components/SEO";
@@ -99,7 +98,6 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
 }
 
 export default function Home() {
-  const { isLoading: authLoading } = useAuth();
   const { data: spots } = useSpots({ status: "approved" });
   const [currentMotto, setCurrentMotto] = useState(0);
   const prefersReducedMotion = useReducedMotion();
@@ -109,8 +107,6 @@ export default function Home() {
     const interval = setInterval(() => setCurrentMotto(m => (m + 1) % MOTTOS.length), 3000);
     return () => clearInterval(interval);
   }, [prefersReducedMotion]);
-
-  if (authLoading) return <div className="min-h-screen bg-background" />;
 
   return (
     <div className="min-h-[calc(100vh-5rem)] flex flex-col relative overflow-hidden">

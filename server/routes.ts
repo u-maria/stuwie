@@ -1,26 +1,23 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { type Server } from "http";
 import { storage } from "./storage";
 import { db } from "./db";
-import { 
-  studySpots, spotImages, reviews, savedSpots, checkIns,
-  type StudySpot, type SpotImage, type Review, type SavedSpot, type CheckIn,
-  type InsertStudySpot, type InsertSpotImage, type InsertReview, type InsertSavedSpot, type InsertCheckIn
-} from "@shared/schema";
-import { eq, and, desc } from "drizzle-orm";
-import { setupAuth, isAuthenticated, authStorage } from "./replit_integrations/auth";
-import { registerAuthRoutes } from "./replit_integrations/auth/routes";
+import { studySpots, spotImages, reviews, savedSpots, checkIns } from "@shared/schema";
+import { eq } from "drizzle-orm";
 import { api } from "@shared/routes";
-import { z } from "zod";
 import { getFallbackSpot, getFallbackSpots } from "./fallback-spots";
 
 export async function registerRoutes(
   httpServer: Server,
   app: Express
 ): Promise<Server> {
-  // Set up auth first
-  await setupAuth(app);
-  registerAuthRoutes(app);
+  const disabledAccountFeature = (_req: Request, res: Response) => {
+    res.status(410).json({ message: "Authentication and account features are disabled in this public prototype." });
+  };
+
+  ["/api/auth/user", "/api/login", "/api/callback", "/api/logout"].forEach((path) => {
+    app.all(path, disabledAccountFeature);
+  });
 
   // Seed DB Function
   async function seedDatabase() {
@@ -30,15 +27,6 @@ export async function registerRoutes(
       const hasFakeSpots = spots.some(s => s.name === "Café Central" || s.name === "Study Hub 1090");
       
       if (spots.length === 0 || hasFakeSpots) {
-        const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
-        const adminUser = await authStorage.upsertUser({
-          id: "admin-id-123",
-          email: adminEmail,
-          firstName: "Admin",
-          lastName: "User",
-          profileImageUrl: null
-        });
-
         // Wipe old seeds (A)
         for (const s of spots) {
           if (s.name === "Café Central" || s.name === "Study Hub 1090") {
@@ -184,7 +172,7 @@ export async function registerRoutes(
               website: s.website,
               description: s.description,
               tags: s.tags,
-              createdByUserId: adminUser.id,
+              createdByUserId: null,
             });
             await storage.updateStudySpotStatus(newSpot.id, "approved");
             await storage.addSpotImages([{ spotId: newSpot.id, url: s.photo_url, sortOrder: 0 }]);
@@ -198,18 +186,20 @@ export async function registerRoutes(
 
   // API Routes
   app.get(api.spots.list.path, async (req, res) => {
+    if (req.query.status && req.query.status !== "approved") {
+      return res.json([]);
+    }
+
     try {
       const allSpots = await storage.getStudySpots();
       
-      const statusFilter = req.query.status as string;
       const districtFilter = req.query.district as string;
       const openOnSundays = req.query.openOnSundays as string;
       const hasWifi = req.query.hasWifi as string;
       const hasOutlets = req.query.hasOutlets as string;
 
       const filtered = allSpots.filter(s => {
-        if (statusFilter && s.status !== statusFilter) return false;
-        if (!statusFilter && s.status !== "approved") return false; // Default to approved
+        if (s.status !== "approved") return false;
         if (districtFilter && s.district !== districtFilter) return false;
         if (openOnSundays === "true" && !s.sundayOpen) return false;
         if (hasWifi === "true" && !s.hasWifi) return false;
@@ -217,11 +207,11 @@ export async function registerRoutes(
         return true;
       });
 
-      // Populate images and creator
+      // Populate images for public spot cards.
       const result = await Promise.all(filtered.map(async s => {
+        const { createdByUserId: _createdByUserId, ...publicSpot } = s;
         const images = await storage.getSpotImages(s.id);
-        const creator = s.createdByUserId ? await authStorage.getUser(s.createdByUserId) : null;
-        return { ...s, images, creator };
+        return { ...publicSpot, images };
       }));
 
       res.json(result);
@@ -240,9 +230,9 @@ export async function registerRoutes(
     try {
       const spot = await storage.getStudySpot(Number(req.params.id));
       if (!spot) return res.status(404).json({ message: "Not found" });
+      const { createdByUserId: _createdByUserId, ...publicSpot } = spot;
       const images = await storage.getSpotImages(spot.id);
-      const creator = spot.createdByUserId ? await authStorage.getUser(spot.createdByUserId) : null;
-      res.json({ ...spot, images, creator });
+      res.json({ ...publicSpot, images });
     } catch (e) {
       console.error("Study spot database unavailable; serving curated fallback spot.", e);
       const spot = getFallbackSpot(Number(req.params.id));
@@ -251,110 +241,20 @@ export async function registerRoutes(
     }
   });
 
-  app.post(api.spots.create.path, isAuthenticated, async (req: any, res) => {
-    try {
-      const body = api.spots.create.input.parse(req.body);
-      const userId = req.user.claims.sub;
-      const spot = await storage.createStudySpot({ ...body, createdByUserId: userId });
-      if (body.images && body.images.length > 0) {
-        await storage.addSpotImages(body.images.map((url, i) => ({ spotId: spot.id, url, sortOrder: i })));
-      }
-      res.status(201).json(spot);
-    } catch (e) {
-      if (e instanceof z.ZodError) return res.status(400).json({ message: e.errors[0].message });
-      res.status(500).json({ message: "Internal Error" });
-    }
-  });
-
-  app.patch(api.spots.updateStatus.path, isAuthenticated, async (req: any, res) => {
-    try {
-      const body = api.spots.updateStatus.input.parse(req.body);
-      const user = await authStorage.getUser(req.user.claims.sub);
-      const adminEmail = process.env.ADMIN_EMAIL || "admin@example.com";
-      if (user?.email !== adminEmail) {
-        return res.status(403).json({ message: "Forbidden" });
-      }
-      
-      const spot = await storage.updateStudySpotStatus(Number(req.params.id), body.status);
-      res.json(spot);
-    } catch (e) {
-      if (e instanceof z.ZodError) return res.status(400).json({ message: e.errors[0].message });
-      res.status(500).json({ message: "Internal Error" });
-    }
-  });
+  app.post("/api/spots", disabledAccountFeature);
+  app.patch("/api/spots/:id/status", disabledAccountFeature);
 
   app.get(api.reviews.list.path, async (req, res) => {
-    const reviews = await storage.getReviewsBySpot(Number(req.params.id));
-    const result = await Promise.all(reviews.map(async r => {
-      const user = await authStorage.getUser(r.userId);
-      return { ...r, user };
-    }));
-    res.json(result);
+    const spotReviews = await storage.getReviewsBySpot(Number(req.params.id));
+    res.json(spotReviews.map(({ userId: _userId, ...review }) => ({ ...review, user: null })));
   });
 
-  app.post(api.reviews.create.path, isAuthenticated, async (req: any, res) => {
-    try {
-      const body = api.reviews.create.input.parse(req.body);
-      const spotId = Number(req.params.id);
-      const userId = req.user.claims.sub;
-      
-      const spot = await storage.getStudySpot(spotId);
-      if (!spot) return res.status(404).json({ message: "Spot not found" });
-
-      const review = await storage.createReview({ ...body, spotId, userId });
-      res.status(201).json(review);
-    } catch (e) {
-      if (e instanceof z.ZodError) return res.status(400).json({ message: e.errors[0].message });
-      res.status(500).json({ message: "Internal Error" });
-    }
-  });
-
-  app.delete(api.reviews.delete.path, isAuthenticated, async (req: any, res) => {
-    const success = await storage.deleteReview(Number(req.params.id), req.user.claims.sub);
-    if (!success) return res.status(404).json({ message: "Review not found or not owned by user" });
-    res.status(204).send();
-  });
-
-  app.get(api.savedSpots.list.path, isAuthenticated, async (req: any, res) => {
-    const saved = await storage.getUserSavedSpots(req.user.claims.sub);
-    const result = await Promise.all(saved.map(async s => {
-      const spot = await storage.getStudySpot(s.spotId);
-      if (!spot) return null;
-      const images = await storage.getSpotImages(s.spotId);
-      return { ...s, spot: { ...spot, images } };
-    }));
-    res.json(result.filter(Boolean));
-  });
-
-  app.post(api.savedSpots.toggle.path, isAuthenticated, async (req: any, res) => {
-    try {
-      const body = api.savedSpots.toggle.input.parse(req.body);
-      const action = await storage.toggleSavedSpot(req.user.claims.sub, body.spotId, body.listType);
-      res.json({ action });
-    } catch (e) {
-      if (e instanceof z.ZodError) return res.status(400).json({ message: e.errors[0].message });
-      res.status(500).json({ message: "Internal Error" });
-    }
-  });
-
-  app.get(api.checkIns.list.path, isAuthenticated, async (req: any, res) => {
-    const checkIns = await storage.getUserCheckIns(req.user.claims.sub);
-    const result = await Promise.all(checkIns.map(async c => {
-      const spot = await storage.getStudySpot(c.spotId);
-      if (!spot) return null;
-      const images = await storage.getSpotImages(c.spotId);
-      return { ...c, spot: { ...spot, images } };
-    }));
-    res.json(result.filter(Boolean));
-  });
-
-  app.post(api.checkIns.create.path, isAuthenticated, async (req: any, res) => {
-    const spotId = Number(req.params.id);
-    const spot = await storage.getStudySpot(spotId);
-    if (!spot) return res.status(404).json({ message: "Not found" });
-    const checkIn = await storage.createCheckIn({ spotId, userId: req.user.claims.sub });
-    res.status(201).json(checkIn);
-  });
+  app.post("/api/spots/:id/reviews", disabledAccountFeature);
+  app.delete("/api/reviews/:id", disabledAccountFeature);
+  app.get("/api/user/saved-spots", disabledAccountFeature);
+  app.post("/api/user/saved-spots/toggle", disabledAccountFeature);
+  app.get("/api/user/check-ins", disabledAccountFeature);
+  app.post("/api/spots/:id/check-in", disabledAccountFeature);
 
   // Call seed database
   seedDatabase().catch(console.error);

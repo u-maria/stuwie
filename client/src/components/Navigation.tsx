@@ -1,12 +1,9 @@
 import { Link, useLocation } from "wouter";
-import { Map, LayoutGrid, Info, UserPlus, LogOut, ChevronRight } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
-import { Button } from "@/components/ui/button";
+import { Map, LayoutGrid, Info } from "lucide-react";
 import st濒eLogo from "@assets/IMG_0627_1772645584092.PNG";
 
 export function Navigation() {
   const [location] = useLocation();
-  const { user, isAuthenticated, logout } = useAuth();
 
   const navLinks = [
     { href: "/spots", label: "Browse", icon: LayoutGrid },
@@ -41,25 +38,6 @@ export function Navigation() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 md:gap-4">
-            {isAuthenticated ? (
-              <div className="flex items-center gap-3">
-                <span className="hidden sm:block text-sm font-medium">{user?.firstName || user?.email}</span>
-                <Button variant="ghost" size="icon" onClick={() => logout()} className="text-muted-foreground hover:text-destructive rounded-full">
-                  <LogOut className="w-5 h-5" />
-                </Button>
-              </div>
-            ) : (
-              <>
-                <Button asChild variant="ghost" className="hidden md:flex rounded-full font-medium text-muted-foreground hover:text-foreground">
-                  <Link href="/signup">Sign Up</Link>
-                </Button>
-                <Button asChild size="sm" className="rounded-full shadow-lg shadow-primary/10 hover:shadow-xl transition-all font-bold px-4 md:px-6 h-9 md:h-11 text-sm md:text-base">
-                  <Link href="/signin">Sign In</Link>
-                </Button>
-              </>
-            )}
-          </div>
         </div>
       </div>
       

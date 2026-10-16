@@ -2,9 +2,6 @@ import { pgTable, text, serial, integer, boolean, timestamp, jsonb, doublePrecis
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
-import { users } from "./models/auth";
-
-export * from "./models/auth";
 
 export const studySpots = pgTable("study_spots", {
   id: serial("id").primaryKey(),
@@ -23,7 +20,7 @@ export const studySpots = pgTable("study_spots", {
   tags: jsonb("tags"), // array of strings
   avgRating: numeric("avg_rating").default("0"),
   reviewCount: integer("review_count").default(0),
-  createdByUserId: text("created_by_user_id"), // references users.id
+  createdByUserId: text("created_by_user_id"), // legacy creator identifier retained for existing rows
   status: text("status").default("pending"), // pending, approved, rejected
   isFeatured: boolean("is_featured").default(false),
   isSponsored: boolean("is_sponsored").default(false),
@@ -65,10 +62,9 @@ export const checkIns = pgTable("check_ins", {
 });
 
 // Relations
-export const studySpotsRelations = relations(studySpots, ({ many, one }) => ({
+export const studySpotsRelations = relations(studySpots, ({ many }) => ({
   images: many(spotImages),
   reviews: many(reviews),
-  creator: one(users, { fields: [studySpots.createdByUserId], references: [users.id] }),
 }));
 
 export const spotImagesRelations = relations(spotImages, ({ one }) => ({
@@ -77,17 +73,14 @@ export const spotImagesRelations = relations(spotImages, ({ one }) => ({
 
 export const reviewsRelations = relations(reviews, ({ one }) => ({
   spot: one(studySpots, { fields: [reviews.spotId], references: [studySpots.id] }),
-  user: one(users, { fields: [reviews.userId], references: [users.id] }),
 }));
 
 export const savedSpotsRelations = relations(savedSpots, ({ one }) => ({
   spot: one(studySpots, { fields: [savedSpots.spotId], references: [studySpots.id] }),
-  user: one(users, { fields: [savedSpots.userId], references: [users.id] }),
 }));
 
 export const checkInsRelations = relations(checkIns, ({ one }) => ({
   spot: one(studySpots, { fields: [checkIns.spotId], references: [studySpots.id] }),
-  user: one(users, { fields: [checkIns.userId], references: [users.id] }),
 }));
 
 // Base Schemas
@@ -124,26 +117,9 @@ export type InsertCheckIn = z.infer<typeof insertCheckInSchema>;
 export type CreateStudySpotRequest = InsertStudySpot & { images?: string[] };
 export type UpdateStudySpotStatusRequest = { status: "pending" | "approved" | "rejected" };
 
-export type StudySpotResponse = StudySpot & { 
-  images: SpotImage[],
-  creator?: {
-    id: string;
-    email: string | null;
-    firstName: string | null;
-    lastName: string | null;
-    profileImageUrl: string | null;
-  }
-};
+export type StudySpotResponse = Omit<StudySpot, "createdByUserId"> & { images: SpotImage[] };
 
 export type SpotsListResponse = StudySpotResponse[];
-export type ReviewResponse = Review & { 
-  user: { 
-    id: string; 
-    email: string | null; 
-    firstName: string | null; 
-    lastName: string | null; 
-    profileImageUrl: string | null;
-  } 
-};
+export type ReviewResponse = Omit<Review, "userId"> & { user: null };
 export type SavedSpotResponse = SavedSpot & { spot: StudySpotResponse };
 export type CheckInResponse = CheckIn & { spot: StudySpotResponse };

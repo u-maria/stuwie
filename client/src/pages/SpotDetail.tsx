@@ -1,16 +1,11 @@
 import { useRoute, useLocation } from "wouter";
-import { MapPin, Wifi, Plug, Star, Clock, Globe, ArrowLeft, Heart, CheckCircle2, MessageSquare, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import { MapPin, Wifi, Plug, Star, Clock, ArrowLeft, MessageSquare, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "wouter";
 import { useSpot, useSpots } from "@/hooks/use-spots";
 import { useReviews } from "@/hooks/use-reviews";
-import { useCreateCheckIn, useToggleSavedSpot, useSavedSpots, useCheckIns } from "@/hooks/use-user-activity";
-import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { useState, useMemo } from "react";
-import { useToast } from "@/hooks/use-toast";
+import { useMemo } from "react";
 import { getSpotStats, DEMO_REVIEWS } from "@/lib/reviews-data";
 import { SEO } from "@/components/SEO";
 
@@ -21,20 +16,10 @@ export default function SpotDetail() {
   const [, params] = useRoute("/spots/:id");
   const [, setLocation] = useLocation();
   const spotId = parseInt(params?.id || "0");
-  const { toast } = useToast();
-  const { isAuthenticated } = useAuth();
   
   const { data: spot, isLoading: spotLoading } = useSpot(spotId);
   const { data: rawSpots } = useSpots({ status: "approved" });
   const { data: realReviews } = useReviews(spotId);
-  const { data: savedSpots } = useSavedSpots();
-  const { data: checkIns } = useCheckIns();
-  
-  const checkInMutation = useCreateCheckIn();
-  const toggleSaveMutation = useToggleSavedSpot();
-
-  const [reviewOpen, setReviewOpen] = useState(false);
-  const [selectedRating, setSelectedRating] = useState(0);
 
   const spots = useMemo(() => {
     if (!rawSpots) return [];
@@ -56,19 +41,7 @@ export default function SpotDetail() {
   if (spotLoading) return <div className="min-h-screen bg-background animate-pulse" />;
   if (!spot) return <div className="min-h-screen bg-background flex items-center justify-center font-sans text-2xl">Spot not found</div>;
 
-  const isFavorite = savedSpots?.some(s => s.spotId === spot.id && s.listType === "favorite");
-  const hasCheckedIn = checkIns?.some(c => c.spotId === spot.id);
   const imageUrl = spot.images?.[0]?.url || "https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=1920&q=80";
-
-  const handleCheckIn = () => {
-    if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
-    checkInMutation.mutate(spot.id, { onSuccess: () => toast({ title: "Checked in successfully!" }) });
-  };
-
-  const handleFavorite = () => {
-    if (!isAuthenticated) return toast({ title: "Please sign in", variant: "destructive" });
-    toggleSaveMutation.mutate({ spotId: spot.id, listType: "favorite" });
-  };
 
   const currentDayKey = DAY_KEYS[(new Date(new Date().toLocaleString("en-US", {timeZone: "Europe/Vienna"})).getDay() + 6) % 7];
   const todayHours = (spot.openingHours as any)?.[currentDayKey];
@@ -151,36 +124,11 @@ export default function SpotDetail() {
               <h2 className="text-2xl md:text-3xl font-bold flex items-center gap-3 font-sans">
                 <MessageSquare className="w-6 h-6 md:w-8 md:h-8 text-[#EE9BB6]" /> Reviews
               </h2>
-              <Dialog open={reviewOpen} onOpenChange={(o) => { setReviewOpen(o); if(!o) setSelectedRating(0); }}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="rounded-full border-2 font-bold px-6 font-sans">Leave a review</Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader><DialogTitle className="font-sans">Leave a review for {spot.name}</DialogTitle></DialogHeader>
-                  <div className="space-y-4 py-4">
-                    <div className="flex gap-2">
-                      {[1,2,3,4,5].map(s => (
-                        <Star 
-                          key={s} 
-                          onClick={() => setSelectedRating(s)}
-                          className={`w-6 h-6 cursor-pointer transition-colors ${selectedRating >= s ? "fill-accent text-accent" : "text-muted"}`} 
-                        />
-                      ))}
-                    </div>
-                    <Textarea placeholder="Share your experience..." className="min-h-[100px] rounded-xl font-sans" />
-                  </div>
-                  <DialogFooter>
-                    <Button className="w-full font-bold font-sans" onClick={() => toast({ title: "Demo only", description: "Please sign in or create an account to leave a review.", duration: 2500 })}>
-                      Submit Review
-                    </Button>
-                  </DialogFooter>
-                </DialogContent>
-              </Dialog>
             </div>
 
             <div className="space-y-8">
               {reviews.length === 0 ? (
-                <p className="text-lg text-muted-foreground italic font-sans">No reviews yet. Be the first!</p>
+                <p className="text-lg text-muted-foreground italic font-sans">No reviews yet.</p>
               ) : reviews.map((review: any) => (
                 <div key={review.id} className="border-b border-border/40 pb-8 last:border-0 font-sans">
                   <div className="flex items-center justify-between mb-3">
@@ -210,15 +158,9 @@ export default function SpotDetail() {
 
         <div className="md:w-80 lg:w-96 space-y-8 shrink-0">
           <div className="bg-card p-6 md:p-8 rounded-[24px] md:rounded-[32px] shadow-lg border border-border/50 sticky top-28">
-            <h3 className="text-xl font-bold mb-6 font-sans">Quick Actions</h3>
-            <Button className={`w-full justify-center h-14 rounded-xl mb-3 text-lg font-bold shadow-md font-sans ${hasCheckedIn ? "bg-accent" : "bg-primary"}`} onClick={handleCheckIn} disabled={checkInMutation.isPending || hasCheckedIn}>
-              <CheckCircle2 className="w-5 h-5 mr-2" /> {hasCheckedIn ? "Checked In!" : "Check-in Here"}
-            </Button>
-            <Button variant="outline" className={`w-full justify-center h-14 rounded-xl mb-8 border-2 text-lg font-bold font-sans ${isFavorite ? "text-destructive border-destructive" : ""}`} onClick={handleFavorite}>
-              <Heart className={`w-5 h-5 mr-2 ${isFavorite ? "fill-destructive" : ""}`} /> {isFavorite ? "In Favorites" : "Favorite Spot"}
-            </Button>
+            <h3 className="text-xl font-bold mb-6 font-sans">Plan your visit</h3>
 
-            <div className="space-y-6 pt-6 border-t border-border/50">
+            <div className="space-y-6">
               <h4 className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground font-sans">Opening Hours</h4>
               <div className="space-y-2">
                 {DAY_KEYS.map((key, i) => {

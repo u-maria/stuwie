@@ -1,2 +1,3 @@
 - [Production database freeze](deployment-db-freeze.md) — a frozen Replit production DB can make a populated local directory appear empty in the published app.
 - [Map tile provider](map-tile-provider.md) — CARTO’s public Voyager tiles may show an API-key watermark; use attributed OpenStreetMap tiles instead.
+- [Public prototype auth scope](prototype-public-auth-scope.md) — keep the deployed study-spots app public and user-account features disabled.
