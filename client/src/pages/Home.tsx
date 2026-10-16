@@ -54,7 +54,7 @@ function FeaturedSpotHeroCard({ spots }: { spots: any[] }) {
         onClick={() => setLocation(`/spots/${featuredSpot.id}`)}
         className="relative rounded-[24px] md:rounded-[32px] overflow-hidden shadow-xl cursor-pointer border-[6px] md:border-[10px] border-white group"
       >
-        <SpotImage src={imageUrl} alt={featuredSpot.name} className="w-full h-full object-cover aspect-[4/5] md:aspect-square" />
+        <SpotImage src={imageUrl} spotWebsite={featuredSpot.website} alt={featuredSpot.name} className="w-full h-full object-cover aspect-[4/5] md:aspect-square" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
         
         <div className="absolute bottom-3 left-3 right-3 md:bottom-6 md:left-6 md:right-6 bg-white/95 backdrop-blur-md p-3 md:p-6 rounded-xl md:rounded-2xl shadow-lg transition-all duration-300">

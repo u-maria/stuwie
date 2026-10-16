@@ -32,6 +32,7 @@ export function SpotCard({ spot }: { spot: StudySpotResponse }) {
       <div className="relative h-48 w-full overflow-hidden shrink-0">
         <SpotImage
           src={imageUrl} 
+          spotWebsite={spot.website}
           alt={spot.name} 
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />

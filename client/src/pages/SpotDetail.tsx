@@ -52,7 +52,7 @@ export default function SpotDetail() {
       <SEO title={`${spot.name} — Study Spot in ${spot.district}`} description={spot.description} path={`/spots/${spot.id}`} />
       
       <div className="relative h-[40vh] md:h-[60vh] w-full animate-reveal">
-        <SpotImage src={imageUrl} alt={spot.name} className="w-full h-full object-cover" />
+        <SpotImage src={imageUrl} spotWebsite={spot.website} alt={spot.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-black/30" />
         
         <div className="absolute top-6 left-6 z-10">
